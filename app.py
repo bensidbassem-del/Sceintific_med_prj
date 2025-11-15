@@ -3,7 +3,7 @@ import sqlite3
 from werkzeug.security import check_password_hash,generate_password_hash
 from flask import session
 app = Flask(__name__)
-
+app.secret_key = 'bassem'
 @app.route('/')
 def accueil():
     return render_template('login.html')
@@ -21,7 +21,10 @@ def setup_database():
             email TEXT UNIQUE NOT NULL,
             dateofbirth DATE,    
             password_hash TEXT NOT NULL,
-            is_admin BOOLEAN DEFAULT 0
+            role TEXT  NOT NULL,  -- 'super_admin', 'admin', 'participant', 'author', 'committee', 'speaker', 'animator',
+            institution TEXT,
+            research_domain TEXT,
+            biography TEXT
         )
     """)
     
@@ -29,14 +32,9 @@ def setup_database():
     admin_hash = generate_password_hash('admin')
     print(f"Admin hash: {admin_hash}")  # Debug print
     
-    cur.execute("INSERT OR IGNORE INTO users (username, email, password_hash, is_admin) VALUES (?,?, ?, ?)",
-                ('admin','admin@example.com', admin_hash, 1))
+    cur.execute("INSERT OR IGNORE INTO users (username, email, password_hash, role) VALUES (?,?, ?, ?)",
+                ('admin','admin@example.com', admin_hash, 'super_admin'))
     
-    # Check if user was inserted
-    if cur.rowcount > 0:
-        print("Admin user created successfully")
-    else:
-        print("Admin user already exists")
     
     con.commit()
     
@@ -65,7 +63,7 @@ def checkin():
     if user and check_password_hash(user[4], password):  
         session['user_id'] = user[0]
         session['email'] = user[2]
-        session['is_admin'] = user[5]  
+        session['role'] = user[5]  
         
         if user[5]:  
             return render_template('superadmindashboard.html')
@@ -73,7 +71,6 @@ def checkin():
             return redirect(url_for('userpage'))
     else:
         return render_template('login.html', error="Invalid credentials")
-app.secret_key = 'bassem'
 
   
    
@@ -89,22 +86,28 @@ def register():
     password=request.form.get('password')
     password=generate_password_hash(password)
     role=request.form.get('role')
-    if role=='superadmin':
-        role=1
-    else:
-        role=0
     con = sqlite3.connect("database.db")
     cur=con.cursor()
-    cur.execute("INSERT INTO users (username,email,dateofbirth,password_hash,is_admin)VALUES (?,?,?,?,?)",(username,email,dateofbirth,password,role) )
+    cur.execute("INSERT INTO users (username,email,dateofbirth,password_hash,role)VALUES (?,?,?,?,?)",(username,email,dateofbirth,password,role) )
     con.commit()
-    return render_template('welcome.html', username=username, email=email, dateofbirth=dateofbirth, password=password)
-
+    con.close()
+    if role == 'admin':
+        return redirect(url_for('admindashboard'))
+    else:
+        if role == 'superadmin':
+            return redirect(url_for('superadm'))
+        else:
+            return redirect(url_for('userdashboard.html'))
+    #return render_template('welcome.html', username=username, email=email, dateofbirth=dateofbirth, password=password)
+@app.route('/adminpage')
+def admindashboard():
+    return render_template('admindashboard.html')
 @app.route('/superadm')
 def superadm():
     return render_template('superadmindashboard.html')
 
-@app.route('/userpage')
-def userpage():
+@app.route('/userdetails')
+def userdetails():
     email=session.get('email')
     con = sqlite3.connect("database.db")
     cur=con.cursor()
@@ -141,6 +144,10 @@ def create_event():
     if request.method=='GET':
         return render_template('create_event.html')
     else:
+        role=session.get('role')
+        if role != 'admin':
+            return "Unauthorized", 403
+        
         event_title=request.form.get('event_title')
         event_description=request.form.get('event_description')
         event_start_date=request.form.get('event_start_date')
@@ -148,12 +155,12 @@ def create_event():
         event_location=request.form.get('event_location')
         event_theme=request.form.get('event_theme')
         if not all([event_title, event_description, event_start_date, event_end_date, event_location, event_theme]):
-            return render_template('create_event.html', error="All fields are required")
+           return render_template('create_event.html', error="All fields are required")
         con = sqlite3.connect("database.db")
         cur=con.cursor()
         cur.execute("INSERT INTO events ( event_title,event_description, event_start_date,event_end_date, event_location, event_theme)VALUES (?,?,?,?,?,?)",(event_title,event_description,event_start_date,event_end_date,event_location,event_theme) )
         con.commit()
-        return redirect(url_for('superadm'))
+        return redirect(url_for('admindashboard'))
 @app.route('/show_events',methods=['GET'])
 def show_events():
     con = sqlite3.connect("database.db")
