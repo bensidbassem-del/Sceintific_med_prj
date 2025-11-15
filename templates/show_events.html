@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events List</title>
+</head>
+<body>
+    <h1>All Events</h1>
+    <ul>
+        
+        {% for row in data %}
+    
+        <li>
+            <h2>{{ row[1] }}</h2>
+            <p>{{ row[2] }}</p>
+            <p>Start Date: {{ row[3] }}</p>
+            <p>End Date: {{ row[4] }}</p>
+            <p>Location: {{ row[5] }}</p>
+            <p>Theme: {{ row[6] }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

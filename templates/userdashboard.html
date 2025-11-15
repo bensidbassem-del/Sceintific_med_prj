@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+    <h1>Welcome {{data[0][1]}} !</h1>
+  <h2>User Information</h2>
+
+  {% for row in data %}
+    <div class="card">
+      <p><span>Name:</span> {{ row[1] }}</p>
+      <p><span>Email:</span> {{ row[2] }}</p>
+      <h3>Scann the Code to ask a question </h3>
+      <div id="qrcode"></div>
+<script type="text/javascript">
+new QRCode(document.getElementById("qrcode"), "http://192.168.1.11:5000/question?eid=1");
+</script>
+      <p><span>DOB:</span> {{ row[3] }}</p>
+      <p><span>Role:</span> {{ row[5] }}</p>
+    </div>
+  {% endfor %}
+    <input type="button" value="Logout" onclick="location.href='/logout'">
+ 
+</body>
+</html>

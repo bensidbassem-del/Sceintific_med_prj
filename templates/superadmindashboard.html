@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <form action="/find" method="get">
+    <input type="email" name="email" placeholder="Enter email">
+    <input type="submit" value="Find User">
+    </form>
+    <form action="/delete" method="get">
+    <input type="email" name="email" placeholder="Enter email to delete">
+    <input type="submit" value="Delete User">
+    </form>
+    <input type="button" value="Create Event" onclick="location.href='/create_event'">
+    <input type="button" value="View All Events" onclick="location.href='/show_events'">
+    <input type="button" value="Logout" onclick="location.href='/logout'">
+</body>
+</html>
