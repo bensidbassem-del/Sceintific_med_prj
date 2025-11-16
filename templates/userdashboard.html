@@ -8,22 +8,22 @@
 </head>
 
 <body>
-    <h1>Welcome {{data[0][1]}} !</h1>
+    <h1>Welcome {{username}} !</h1>
   <h2>User Information</h2>
 
-  {% for row in data %}
     <div class="card">
-      <p><span>Name:</span> {{ row[1] }}</p>
-      <p><span>Email:</span> {{ row[2] }}</p>
+      <p><span>Name:</span> {{ username }}</p>
+      <p><span>Email:</span> {{ email }}</p>
       <h3>Scann the Code to ask a question </h3>
       <div id="qrcode"></div>
 <script type="text/javascript">
 new QRCode(document.getElementById("qrcode"), "http://192.168.1.11:5000/question?eid=1");
 </script>
-      <p><span>DOB:</span> {{ row[3] }}</p>
-      <p><span>Role:</span> {{ row[5] }}</p>
+      <p><span>DOB:</span> {{ dateofbirth }}</p>
+      <p><span>Role:</span> {{ role }}</p>
+      <input type="button" value="Create Event" onclick="location.href='/create_event'">
     </div>
-  {% endfor %}
+ 
     <input type="button" value="Logout" onclick="location.href='/logout'">
  
 </body>

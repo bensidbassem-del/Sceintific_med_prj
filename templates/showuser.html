@@ -56,7 +56,12 @@ new QRCode(document.getElementById("qrcode"), "http://192.168.1.11:5000/question
 </script>
       <p><span>DOB:</span> {{ row[3] }}</p>
       <p><span>Role:</span> {{ row[5] }}</p>
-      <a href="/delete?email={{ row[2] }}">Delete User</a>
+     <form method="POST" action="/deleteuser" style="display: inline;">
+    <input type="hidden" name="email" value="{{ row[2] }}">
+    <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
+        Delete User
+    </button>
+    </form>
     </div>
   {% endfor %}
   

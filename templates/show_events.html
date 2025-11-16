@@ -19,6 +19,11 @@
             <p>Location: {{ row[5] }}</p>
             <p>Theme: {{ row[6] }}</p>
         </li>
+      <form method="POST" action="/deleteevent" style="display: inline;">
+    <input type="hidden" name="id" value="{{ row[0] }}">
+    <input type="submit" value="Delete Event" 
+           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
+    </form>
         {% endfor %}
     </ul>
 </body>

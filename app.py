@@ -42,7 +42,14 @@ def setup_database():
     cur.execute("SELECT * FROM users WHERE email=?", ('admin@example.com',))
     user = cur.fetchone()
     print(f"User in database: {user}")  # Debug print
-    cur.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, event_title TEXT,event_description TEXT, event_start_date DATE,event_end_date DATE, event_location TEXT, event_theme TEXT)")
+    cur.execute("""CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 event_title TEXT,event_description TEXT,
+                 event_start_date DATE,event_end_date DATE,
+                 event_location TEXT,
+                 event_theme TEXT,
+                 organiser_id INTEGER,
+                 status TEXT DEFAULT 'upcoming',
+                 FOREIGN KEY (organiser_id) REFERENCES users (id))""")
     con.commit()
     con.close()
 
@@ -65,10 +72,13 @@ def checkin():
         session['email'] = user[2]
         session['role'] = user[5]  
         
-        if user[5]:  
+        if user[5]=='super_admin':  
             return render_template('superadmindashboard.html')
         else:
-            return redirect(url_for('userpage'))
+            if user[5]=='admin':  
+                return redirect(url_for('admindashboard'))
+            else:
+             return redirect(url_for('userpage'))
     else:
         return render_template('login.html', error="Invalid credentials")
 
@@ -97,7 +107,7 @@ def register():
         if role == 'superadmin':
             return redirect(url_for('superadm'))
         else:
-            return redirect(url_for('userdashboard.html'))
+            return redirect(url_for('userpage'))
     #return render_template('welcome.html', username=username, email=email, dateofbirth=dateofbirth, password=password)
 @app.route('/adminpage')
 def admindashboard():
@@ -105,6 +115,9 @@ def admindashboard():
 @app.route('/superadm')
 def superadm():
     return render_template('superadmindashboard.html')
+@app.route('/userpage')
+def userpage():
+    return render_template('userdashboard.html')
 
 @app.route('/userdetails')
 def userdetails():
@@ -126,9 +139,9 @@ def find():
     con.close()
     return render_template('showuser.html', data=data)
 
-@app.route('/delete',methods=['GET'])
+@app.route('/deleteuser',methods=['POST'])
 def delete():
-    email=request.args.get('email')    
+    email=request.form.get('email')    
     con = sqlite3.connect("database.db")
     cur=con.cursor()
     cur.execute("DELETE FROM users WHERE email=?",(email,))
@@ -144,21 +157,21 @@ def create_event():
     if request.method=='GET':
         return render_template('create_event.html')
     else:
-        role=session.get('role')
-        if role != 'admin':
-            return "Unauthorized", 403
-        
         event_title=request.form.get('event_title')
         event_description=request.form.get('event_description')
         event_start_date=request.form.get('event_start_date')
         event_end_date=request.form.get('event_end_date')
         event_location=request.form.get('event_location')
         event_theme=request.form.get('event_theme')
+        role=session.get('role')
+        if role != 'admin':
+            return "Unauthorized", 403
+        organiser_id=session.get('user_id')
         if not all([event_title, event_description, event_start_date, event_end_date, event_location, event_theme]):
            return render_template('create_event.html', error="All fields are required")
         con = sqlite3.connect("database.db")
         cur=con.cursor()
-        cur.execute("INSERT INTO events ( event_title,event_description, event_start_date,event_end_date, event_location, event_theme)VALUES (?,?,?,?,?,?)",(event_title,event_description,event_start_date,event_end_date,event_location,event_theme) )
+        cur.execute("INSERT INTO events ( event_title,event_description, event_start_date,event_end_date, event_location, event_theme,organiser_id)VALUES (?,?,?,?,?,?,?)",(event_title,event_description,event_start_date,event_end_date,event_location,event_theme,organiser_id) )
         con.commit()
         return redirect(url_for('admindashboard'))
 @app.route('/show_events',methods=['GET'])
@@ -169,6 +182,14 @@ def show_events():
     data=cur.fetchall()
     con.close()
     return render_template('show_events.html', data=data)    
+@app.route('/deleteevent',methods=['POST'])
+def deleteevent():
+    id=request.form.get('id')    
+    con = sqlite3.connect("database.db")
+    cur=con.cursor()
+    cur.execute("DELETE FROM events WHERE id=?",(id,))
+    con.commit()
+    return redirect(url_for('admindashboard'))
 
 @app.route('/logout')
 def logout():
