@@ -3,19 +3,369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sign up page</title>
+    <style>
+        #role{
+            width: 493px;
+        }
+        .input-icon {
+           
+  position: relative;
+  width: 100%;
+}
+
+.input-icon svg {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #888;
+}
+
+.input-icon input{
+  width: 100%;
+  padding: 10px 10px 20px 42px;  /*space for the icon */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-left: 0px;
+ 
+ 
+}
+/* input::placeholder{
+   padding-left: 20px;
+} */
+
+
+select {
+   text-align: center;
+}
+select option {
+  direction: ltr;
+}
+.separator {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+body {
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 50%, #1e40af 100%);
+            min-height: 100vh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+             padding: 20px;
+}
+ .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);}
+
+.header {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+    color: #0077c7;
+}
+
+.header p {
+    color: #555;
+    margin-top: 5px;
+}
+
+
+.signup-container {
+    width: 480px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.signup-header h1 {
+    margin: 0;
+    font-size: 26px;
+    color: #333;
+}
+
+.signup-header p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+   
+   width: 93%;
+
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+    color: #333;
+    
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 12px 12px 35px;
+    border-radius: 8px;
+    border: 1px solid #d8d8d8;
+    transition: all 0.3s ease;
+    background: #f8f9fb;
+    font-size: 15px;
+    outline: none;
+    /* margin-left: 20px; */
+    align-self: center;
+    outline: none;
+ 
+}
+.form-group :focus{
+    border-color: #0077c7;
+     box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+     background: white;
+     
+     
+  
+    
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #0077c7;
+}
+
+
+.checkbox-group {
+    margin: 15px 0;
+    font-size: 14px;
+}
+
+.checkbox-group .link {
+    color: #0077c7;
+    cursor: pointer;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #1ca2fb;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.submit-btn:hover {
+    background: #005fa3;
+    transform: translateY(-5px);
+    scale: (1.05);
+box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+}
+a:hover{
+    color: #005fa3;
+}
+.link:hover{
+    color: #005fa3;
+}
+ .csc{  /* t3 logo */
+    color: white;
+    width: 200px;
+}
+#role option{
+    padding: 12px;
+    border-radius: 8px;
+color: black;}
+#role option:hover{
+    background: #e0f2fe;
+}
+
+
+
+
+    </style>
 </head>
+
 <body>
-    <form action="/register" method="post">
-    <input type="text" name="username" placeholder="Enter username">
-    <input type="email" name="email" placeholder="Enter email">
-    <input type="date" name="dateofbirth" placeholder="Enter date of birth">
-    <input type="password" name="password" placeholder="Enter password">
-    <select name="role">
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-        <option value="super_admin">Super Admin</option>
-    <input type="submit" value="Sign Up">
-    </form>
+    <div class="signup-container">
+        <div class="signup-header">
+              <div class="header">
+                  <div class="logo">
+                   <svg class="csc" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+  <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+  <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5"/>
+</svg>
+                <i class="fas fa-user-plus"></i>
+            </div>
+        <h1>Create account</h1>
+        <p>Join our medical events community</p>
+    </div>
+        </div>
+
+        <form class="signup-form">
+            <div class="form-group">
+              <div class="input-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+       class="bi bi-person-fill" viewBox="0 0 16 16">
+    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+  </svg>
+  <input type="text" placeholder="Enter your name" required>
+</div>
+            </div>
+
+            <div class="form-group">
+               <span class="input-icon">
+   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+  <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
+</svg>
+  </span>
+                <input type="email" id="email" name="email" placeholder="Enter email" required>
+            </div>
+  <div class="form-group">
+
+                <input type="date" id="nom" name="nom" placeholder="Birthdate" required>
+            </div>
+
+
+            <div class="form-group">
+                <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hospital-fill" viewBox="0 0 16 16">
+  <path d="M6 0a1 1 0 0 0-1 1v1a1 1 0 0 0-1 1v4H1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h6v-2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5V16h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-3V3a1 1 0 0 0-1-1V1a1 1 0 0 0-1-1zm2.5 5.034v1.1l.953-.55.5.867L9 7l.953.55-.5.866-.953-.55v1.1h-1v-1.1l-.953.55-.5-.866L7 7l-.953-.55.5-.866.953.55v-1.1zM2.25 9h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5A.25.25 0 0 1 2 9.75v-.5A.25.25 0 0 1 2.25 9m0 2h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5a.25.25 0 0 1 .25-.25M2 13.25a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zM13.25 9h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5a.25.25 0 0 1 .25-.25M13 11.25a.25.25 0 0 1 .25-.25h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25zm.25 1.75h.5a.25.25 0 0 1 .25.25v.5a.25.25 0 0 1-.25.25h-.5a.25.25 0 0 1-.25-.25v-.5a.25.25 0 0 1 .25-.25"/>
+</svg></span>
+                <input type="text" id="institution" name="institution" placeholder="Institution: University, hospital, laboratory…" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password"></label>
+                 <span class="input-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <title>Padlock</title>
+  <path d="M17 8V7a5 5 0 0 0-10 0v1H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-2zm-8 0V7a3 3 0 0 1 6 0v1H9z"/>
+</svg>
+  </span>
+                <input type="password" id="password" name="password" placeholder="Enter password">
+                 <div id="passwordMessage" class="message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword"></label>
+                 <span class="input-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <title>Padlock</title>
+  <path d="M17 8V7a5 5 0 0 0-10 0v1H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-2zm-8 0V7a3 3 0 0 1 6 0v1H9z"/>
+</svg>
+  </span>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password">
+                   <div id="confirmMessage" class="message"></div>
+            </div>
+  <div class="form-group">
+
+               <span class="input-icon">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
+  <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4m9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382zM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0"/>
+</svg>
+               </span>
+                <select   name="role" id="role" required>
+                    <option  value="" disabled selected>Select your role</option>
+                    <option value="super_admin">Super admin</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">user</option>
+                    <!-- <option value="participant">Participant</option>
+                    <option value="invite">Conférencier invité</option> -->
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="acceptTerms" required>
+                  I accept the <span class="link">terms of use</span> and the <span class="link">privacy policy</span>
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Create my account</button>
+            <hr class="separator">
+            <p class="signup-text">
+           Do you have an account?
+            <a href="Login.html">Sign in</a>
+            </p>
+
+        </form>
+    </div>
+
 </body>
 </html>
+  <script>
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const passwordMessage = document.getElementById('passwordMessage');
+        const confirmMessage = document.getElementById('confirmMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('registrationForm');
+
+        function validatePasswords() {
+            const pwd = password.value;
+            const confirmPwd = confirmPassword.value;
+
+            // Reset states
+            password.classList.remove('valid', 'invalid');
+            confirmPassword.classList.remove('valid', 'invalid');
+            passwordMessage.textContent = '';
+            confirmMessage.textContent = '';
+            submitBtn.disabled = true;
+
+            // Check if password meets requirements
+            if (pwd.length > 0) {
+                if (pwd.length < 6) {
+                    password.classList.add('invalid');
+                    passwordMessage.textContent = 'Password must be at least 6 characters';
+                    passwordMessage.className = 'message error';
+                } else {
+                    password.classList.add('valid');
+                    passwordMessage.textContent = 'Password is valid';
+                    passwordMessage.className = 'message success';
+                }
+            }
+
+            // Check if passwords match
+            if (confirmPwd.length > 0) {
+                if (pwd !== confirmPwd) {
+                    confirmPassword.classList.add('invalid');
+                     confirmMessage.textContent = 'Passwords do not match';
+                    confirmMessage.className = 'message error';
+                } else if (pwd === confirmPwd && pwd.length >= 6) {
+                    confirmPassword.classList.add('valid');
+                     confirmMessage.textContent = 'Passwords match';
+                    confirmMessage.className = 'message success';
+                    submitBtn.disabled = false;
+                }
+            }
+        }
+
+        password.addEventListener('input', validatePasswords);
+        confirmPassword.addEventListener('input', validatePasswords);
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (password.value === confirmPassword.value && password.value.length >= 6) {
+                alert('Form submitted successfully!');
+                form.reset();
+                validatePasswords();
+            }
+        });
+    </script>
