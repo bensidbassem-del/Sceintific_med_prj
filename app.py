@@ -96,9 +96,10 @@ def register():
     password=request.form.get('password')
     password=generate_password_hash(password)
     role=request.form.get('role')
+    institution=request.form.get('institution')
     con = sqlite3.connect("database.db")
     cur=con.cursor()
-    cur.execute("INSERT INTO users (username,email,dateofbirth,password_hash,role)VALUES (?,?,?,?,?)",(username,email,dateofbirth,password,role) )
+    cur.execute("INSERT INTO users (username,email,dateofbirth,password_hash,role,institution)VALUES (?,?,?,?,?,?)",(username,email,dateofbirth,password,role,institution) )
     con.commit()
     con.close()
     if role == 'admin':
