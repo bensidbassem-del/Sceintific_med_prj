@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <title>User List</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 2rem;
+      color: #2c3e50;
+    }
+    h1 {
+      text-align: center;
+      color: #34495e;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+      margin: 1rem auto;
+      transition: 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    .card p {
+      margin: 0.4rem 0;
+      font-size: 1rem;
+    }
+    .card span {
+      font-weight: 600;
+      color: #1a73e8;
+    }
+  </style>
+</head>
+<body>
+  <h1>User Information</h1>
+
+  {% for row in data %}
+    <div class="card">
+      <p><span>Name:</span> {{ row[1] }}</p>
+      <p><span>Email:</span> {{ row[2] }}</p>
+      <div id="qrcode"></div>
+<script type="text/javascript">
+new QRCode(document.getElementById("qrcode"), "http://192.168.1.11:5000/question?eid=1");
+</script>
+      <p><span>DOB:</span> {{ row[3] }}</p>
+      <p><span>Role:</span> {{ row[5] }}</p>
+     <form method="POST" action="/deleteuser" style="display: inline;">
+    <input type="hidden" name="email" value="{{ row[2] }}">
+    <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
+        Delete User
+    </button>
+    </form>
+    </div>
+  {% endfor %}
+  
+ 
+</body>
+</html>

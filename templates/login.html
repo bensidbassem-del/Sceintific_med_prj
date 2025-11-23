@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+   <style>
+    .separator {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+.icon {
+  color: #6b7280;
+}
+body {
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 50%, #1e40af 100%);
+            min-height: 100vh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+             padding: 20px;
+          /*  position: relative;
+            overflow: hidden; */ 
+}
+    .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+ .logo i {
+            color: white;
+            font-size: 40px;
+        }
+
+.header {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+    color: #0077c7;
+}
+
+.header p {
+    color: #555;
+    margin-top: 5px;
+}
+
+
+.login-container {
+    width: 480px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+
+.login-header h1 {
+    margin: 0;
+    font-size: 26px;
+    color: #333;
+}
+
+.login-header p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+
+.form-group {
+    margin-bottom: 24px;
+    
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d8d8d8;
+    background: #f8f9fb;
+    font-size: 15px;
+    outline: none;
+    align-self: center;
+  
+}
+
+.form-group input:focus {
+    border-color: #0077c7;
+}
+
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+   margin-left: 0px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.submit-btn:hover {
+    /* background: #005fa3; */
+     transform: translateY(-5px);
+    scale: (1.05);
+   box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+}
+
+
+.signup-text {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.link {
+    color: #0077c7;
+    cursor: pointer;
+}
+.form-group :focus{
+    border-color: #0077c7;
+     box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+     background: white;
+    
+}
+a:hover{
+    color: #005fa3;
+}
+.csc{  
+  /* t3 logo */
+    color: white;
+}
+
+   </style>
+</head>
+<body>
+
+
+
+    <div class="login-container">
+
+        <div class="login-header">
+            <div class="header">
+                   <div class="logo">
+                    <svg class="csc" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-heart-pulse-fill" viewBox="0 0 16 16">
+  <path d="M1.475 9C2.702 10.84 4.779 12.871 8 15c3.221-2.129 5.298-4.16 6.525-6H12a.5.5 0 0 1-.464-.314l-1.457-3.642-1.598 5.593a.5.5 0 0 1-.945.049L5.889 6.568l-1.473 2.21A.5.5 0 0 1 4 9z"/>
+  <path d="M.88 8C-2.427 1.68 4.41-2 7.823 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C11.59-2 18.426 1.68 15.12 8h-2.783l-1.874-4.686a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8z"/>
+</svg>
+                <i class="fas fa-stethoscope"></i>
+            </div>
+        <h1>Medical Events Portal</h1>
+        <p>Manage and organize scientific medical events</p>
+    </div>
+            <!-- <h1>Connexion</h1>
+            <p>Accédez à votre espace scientifique</p> -->
+        </div>
+
+        <form class="login-form" action="/checkin" method="post">
+
+            <div class="form-group">
+              <div class="input-wrapper">
+  <span class="icon">
+   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+  <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
+</svg>
+  </span>
+  <input type="text" placeholder="Enter your email" name="idd">
+</div>
+
+<style>
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.input-wrapper .icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.input-wrapper input {
+  padding-left: 36px;
+  height: 38px;
+}
+</style>
+            </div>
+
+            <div class="form-group">
+           <div class="input-wrapper">
+  <span class="icon">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <title>Padlock</title>
+  <path d="M17 8V7a5 5 0 0 0-10 0v1H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-2zm-8 0V7a3 3 0 0 1 6 0v1H9z"/>
+</svg>
+  </span>
+  <input type="password" placeholder="Enter your pasword" name="password">
+</div>
+  </div>
+<style>
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 90%;
+}
+.input-wrapper .icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.input-wrapper input {
+  padding-left: 36px;
+  height: 38px;
+}
+</style>
+
+            <button type="submit" class="submit-btn" value="Login">Sign in</button>
+<hr class="separator">
+            <p class="signup-text">
+                Don't have an account?
+                <a class="link" href="/signup">Sign up</a>
+            </p>
+            <!-- <hr class="separator">  -->
+        </form>
+    </div>
+
+</body>
+</html>
