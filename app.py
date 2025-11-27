@@ -139,8 +139,6 @@ def checkin():
              return redirect(url_for('userpage'))
     else:
         return render_template('login.html', error="Invalid credentials")
-
-  
    
 @app.route('/signup')
 def signup():
@@ -180,13 +178,36 @@ def userpage():
 
 @app.route('/userdetails')
 def userdetails():
-    email=session.get('email')
+    email = session.get('email')
+    
+    if not email:
+        return redirect(url_for('accueil')) # Rediriger si l'email n'est pas dans la session
+        
     con = sqlite3.connect("database.db")
-    cur=con.cursor()
-    cur.execute("SELECT * FROM users WHERE email=?",(email,))
-    data=cur.fetchall()
+    cur = con.cursor()
+    # On sélectionne les champs spécifiques
+    cur.execute("SELECT username, email, dateofbirth, role, institution, research_domain, biography FROM users WHERE email=?", (email,))
+    user_data = cur.fetchone() # Utilisez fetchone() car l'email est unique
     con.close()
-    return render_template('userdashboard.html', data=data)
+    
+    if user_data:
+        # Assigner les valeurs récupérées à des variables nommées pour Jinja
+        username = user_data[1]
+        email = user_data[2]
+        dateofbirth = user_data[3]
+        role = user_data[5]
+       
+        
+        return render_template('userdashboard.html', 
+                               username=username, 
+                               email=email, 
+                               dateofbirth=dateofbirth, 
+                               role=role,
+                               # Ajoutez d'autres champs si nécessaire
+                              )
+    else:
+        # Gérer le cas où l'utilisateur n'est pas trouvé
+        return "Utilisateur non trouvé", 404
 
 @app.route('/find',methods=['GET'])
 def find():
@@ -400,7 +421,41 @@ def show_archived_events():
     events = cur.fetchall()
     con.close()
     return render_template('show_events.html', data=events)
+@app.route('/submission_form', methods=['GET', 'POST'])
+def submission_form():
+    # 1. Si c'est un POST (le formulaire a été envoyé pour enregistrement)
+    if request.method == 'POST':
+        if session.get('role') == 'author':
+            titre = request.form.get('titre')
+            resume = request.form.get('resume')
+            type_prop = request.form.get('type')
+            id_user = session.get('user_id')
+            # Assurez-vous d'avoir un <input type="hidden" name="event_id" ...> dans votre HTML
+            id_evenement = request.form.get('event_id') 
+            
+            print("information recupérées")
+            
+            con = sqlite3.connect("database.db")
+            cur = con.cursor()
+            try:
+                cur.execute("""
+                    INSERT INTO Proposition (titre, resume, type, id_user, id_evenement, statut) 
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (titre, resume, type_prop, id_user, id_evenement, 'submitted'))
+                con.commit()
+            except Exception as e:
+                print(f"Erreur DB: {e}")
+            finally:
+                con.close()
 
+            return redirect(url_for('userpage'))
+        else:
+            return "Unauthorized", 403
+
+    # 2. Si c'est un GET (l'utilisateur veut juste VOIR le formulaire)
+    else:
+        event_id = request.args.get('event_id')
+        return render_template('submission_form.html', event_id=event_id)
 if __name__ == '__main__':
     setup_database()
     app.run(debug=True,host="0.0.0.0",port=5000)

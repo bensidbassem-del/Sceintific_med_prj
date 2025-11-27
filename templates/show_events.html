@@ -24,6 +24,9 @@
     <input type="submit" value="Delete Event" 
            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
     </form>
+      <form method="get" >
+        <input type="button" value="Submit proposal" onclick="location.href='/submission_form?event_id={{ row[0] }}'">
+      </form>
         {% endfor %}
     </ul>
 </body>
