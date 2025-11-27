@@ -27,7 +27,72 @@ def setup_database():
             biography TEXT
         )
     """)
-    
+    cur.execute("""CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 event_title TEXT,event_description TEXT,
+                 event_start_date DATE,event_end_date DATE,
+                 event_location TEXT,
+                 event_theme TEXT,
+                 organiser_id INTEGER,
+                 status TEXT DEFAULT 'upcoming',
+                 FOREIGN KEY (organiser_id) REFERENCES users (id))""")
+    cur.execute(""" 
+    CREATE TABLE IF NOT EXISTS Inscription (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type_inscription TEXT,
+    statut_paiement TEXT,
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id_user INTEGER,
+    id_evenement INTEGER
+      )"""  
+    )
+    cur.execute("""
+      CREATE TABLE IF NOT EXISTS Proposition (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titre TEXT,
+    resume TEXT,
+    type TEXT,
+    date_soumission DATETIME DEFAULT CURRENT_TIMESTAMP,
+    statut TEXT,
+    id_user INTEGER,
+    id_evenement INTEGER
+     )"""
+    )
+    cur.execute("""
+     CREATE TABLE IF NOT EXISTS Evaluation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_proposition INTEGER,
+    id_evaluateur INTEGER,
+    note_qualite INTEGER,
+    note_originalite INTEGER,
+    commentaires TEXT,
+    recommandation TEXT,
+    date_evaluation DATETIME DEFAULT CURRENT_TIMESTAMP  )
+    """)
+    #Committee table
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS event_committee (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_id INTEGER,
+    user_id INTEGER,
+    FOREIGN KEY(event_id) REFERENCES events(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+   """)
+
+#Speakers table
+
+    cur.execute("""
+     CREATE TABLE IF NOT EXISTS speakers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_id INTEGER,
+    name TEXT NOT NULL,
+    biography TEXT,
+    topic TEXT,
+    FOREIGN KEY(event_id) REFERENCES events(id)
+    )
+     """)
+
     # Create admin user with hashed password
     admin_hash = generate_password_hash('admin')
     print(f"Admin hash: {admin_hash}")  # Debug print
@@ -99,14 +164,7 @@ CREATE TABLE IF NOT EXISTS speakers (
     cur.execute("SELECT * FROM users WHERE email=?", ('admin@example.com',))
     user = cur.fetchone()
     print(f"User in database: {user}")  # Debug print
-    cur.execute("""CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 event_title TEXT,event_description TEXT,
-                 event_start_date DATE,event_end_date DATE,
-                 event_location TEXT,
-                 event_theme TEXT,
-                 organiser_id INTEGER,
-                 status TEXT DEFAULT 'upcoming',
-                 FOREIGN KEY (organiser_id) REFERENCES users (id))""")
+    
     con.commit()
     con.close()
 
@@ -387,6 +445,153 @@ def show_archived_events():
 def logout():
     session.clear()
     return redirect(url_for('checkin'))
+#event_details()
+
+@app.route('/event_details')
+def event_details():
+    event_id = request.args.get('id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT * FROM events WHERE id=?", (event_id,))
+    event = cur.fetchone()
+
+    # get speakers
+    cur.execute("SELECT name, topic FROM speakers WHERE event_id=?", (event_id,))
+    speakers = cur.fetchall()
+
+    # get committee members
+    cur.execute("""
+        SELECT u.username, u.email 
+        FROM users u 
+        JOIN event_committee ec ON u.id = ec.user_id
+        WHERE ec.event_id=?
+    """, (event_id,))
+    committee = cur.fetchall()
+
+    con.close()
+
+    return render_template('event_details.html', event=event, speakers=speakers, committee=committee)
+#update_event()
+
+@app.route('/update_event', methods=['GET','POST'])
+def update_event():
+    event_id = request.args.get('id')
+
+    if request.method == 'GET':
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute("SELECT * FROM events WHERE id=?", (event_id,))
+        event = cur.fetchone()
+        con.close()
+        return render_template('update_event.html', event=event)
+
+    else:
+        title = request.form.get('event_title')
+        description = request.form.get('event_description')
+        start_date = request.form.get('event_start_date')
+        end_date = request.form.get('event_end_date')
+        location = request.form.get('event_location')
+        theme = request.form.get('event_theme')
+        status = request.form.get('status')
+
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute("""
+            UPDATE events 
+            SET event_title=?, event_description=?, event_start_date=?, event_end_date=?, event_location=?, event_theme=?, status=?
+            WHERE id=?
+        """, (title, description, start_date, end_date, location, theme, status, event_id))
+        con.commit()
+        con.close()
+
+        return redirect(url_for('show_events'))
+
+#Add Committee Member
+
+@app.route('/add_committee_member', methods=['POST'])
+def add_committee_member():
+    user_email = request.form.get('email')
+    event_id = request.form.get('event_id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    # find user id
+    cur.execute("SELECT id FROM users WHERE email=?", (user_email,))
+    user = cur.fetchone()
+
+    if not user:
+        con.close()
+        return "User not found"
+
+    user_id = user[0]
+
+    # insert link
+    cur.execute("INSERT INTO event_committee (event_id, user_id) VALUES (?,?)", (event_id, user_id))
+    con.commit()
+    con.close()
+
+    return redirect(url_for('event_details', id=event_id))
+
+#Add Speaker
+
+@app.route('/add_speaker', methods=['POST'])
+def add_speaker():
+    event_id = request.form.get('event_id')
+    name = request.form.get('name')
+    biography = request.form.get('biography')
+    topic = request.form.get('topic')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        INSERT INTO speakers (event_id, name, biography, topic)
+        VALUES (?, ?, ?, ?)
+    """, (event_id, name, biography, topic))
+
+    con.commit()
+    con.close()
+
+    return redirect(url_for('event_details', id=event_id))
+
+#Show speakers for 1 event
+
+@app.route('/speakers')
+def show_speakers():
+    event_id = request.args.get('event_id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT * FROM speakers WHERE event_id=?", (event_id,))
+    speakers = cur.fetchall()
+    con.close()
+
+    return render_template('speakers.html', speakers=speakers)
+
+#Upcoming events
+
+@app.route('/events/upcoming')
+def show_upcoming_events():
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT * FROM events WHERE status='upcoming'")
+    events = cur.fetchall()
+    con.close()
+    return render_template('show_events.html', data=events)
+
+#Archived events
+
+@app.route('/events/archived')
+def show_archived_events():
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT * FROM events WHERE status='archived'")
+    events = cur.fetchall()
+    con.close()
+    return render_template('show_events.html', data=events)
+
 if __name__ == '__main__':
     setup_database()
     app.run(debug=True,host="0.0.0.0",port=5000)
