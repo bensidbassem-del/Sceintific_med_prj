@@ -3,15 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Soumettre une Proposition</title>
 </head>
 <body>
-    <form action="/submission_form" method="post">
+    
+    <form action="/submission_form" method="post" enctype="multipart/form-data">
+        
         <input type="hidden" name="event_id" value="{{ event_id }}">
-       <input type="text" name="titre"  placeholder="Your proposal title">
-      <input type="text" name="resume" placeholder="Write a short resume"> 
-      <input type="text" name="type"  placeholder="Indicate the type of your proposal">
-      <input type="submit" value="Submit Proposal">
+        
+        <input type="text" name="titre"  placeholder="Your proposal title" required>
+        
+        <input type="text" name="keywords" placeholder="Enter keywords separated by commas" required>
+        
+        <label for="resume_file">Télécharger votre résumé/papier (PDF, DOC, DOCX) :</label>
+        <input type="file" name="resume_file" id="resume_file" accept=".pdf,.doc,.docx" required> 
+        
+        <select name="type" id="type" required>
+            <option value="" disabled selected>Select the type of your presentation</option>
+            <option value="orale">Orale</option>
+            <option value="affiche">Affiche</option>
+            <option value="poster">Poster</option>
+        </select>
+        
+        <input type="submit" value="Submit Proposal">
     </form>
 </body>
 </html>

@@ -2,8 +2,19 @@ from flask import Flask, render_template,request,url_for,redirect
 import sqlite3
 from werkzeug.security import check_password_hash,generate_password_hash
 from flask import session
+import os 
+from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = 'bassem'
+
+UPLOAD_FOLDER = 'upload/proposals' 
+ALLOWED_EXTENSIONS = {'pdf'} 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    """Vérifie si l'extension du fichier est autorisée."""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 @app.route('/')
 def accueil():
     return render_template('login.html')
@@ -51,6 +62,7 @@ def setup_database():
     titre TEXT,
     resume TEXT,
     type TEXT,
+    keywords TEXT,            
     date_soumission DATETIME DEFAULT CURRENT_TIMESTAMP,
     statut TEXT,
     id_user INTEGER,
@@ -124,21 +136,20 @@ def checkin():
     cur.execute("SELECT * FROM users WHERE email=?", (email,))
     user = cur.fetchone()
     con.close()
-    
     if user and check_password_hash(user[4], password):  
         session['user_id'] = user[0]
         session['email'] = user[2]
         session['role'] = user[5]  
         
         if user[5]=='super_admin':  
-            return render_template('superadmindashboard.html')
+            return render_template('superadmindashboard.html', user=user)
         else:
             if user[5]=='admin':  
-                return redirect(url_for('admindashboard'))
+                return render_template('admindashboard.html', user=user)
             else:
-             return redirect(url_for('userpage'))
+             return render_template('userdashboard.html', user=user)
     else:
-        return render_template('login.html', error="Invalid credentials")
+        return render_template('login.html',error="Invalid credentials")
    
 @app.route('/signup')
 def signup():
@@ -221,6 +232,7 @@ def find():
 
 @app.route('/deleteuser',methods=['POST'])
 def delete():
+   if session.get('role')=='super_admin':
     email=request.form.get('email')    
     con = sqlite3.connect("database.db")
     cur=con.cursor()
@@ -264,17 +276,20 @@ def show_events():
     return render_template('show_events.html', data=data)    
 @app.route('/deleteevent',methods=['POST'])
 def deleteevent():
+   if session.get('role')=='admin':
     id=request.form.get('id')    
     con = sqlite3.connect("database.db")
     cur=con.cursor()
     cur.execute("DELETE FROM events WHERE id=?",(id,))
     con.commit()
     return redirect(url_for('admindashboard'))
+   else:
+       return "Vous n'etes pas autorisés"
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('checkin'))
+    return render_template('login.html')
 #event_details()
 
 @app.route('/event_details')
@@ -427,21 +442,50 @@ def submission_form():
     if request.method == 'POST':
         if session.get('role') == 'author':
             titre = request.form.get('titre')
-            resume = request.form.get('resume')
+            mot_cles = request.form.get('keywords')  
             type_prop = request.form.get('type')
             id_user = session.get('user_id')
-            # Assurez-vous d'avoir un <input type="hidden" name="event_id" ...> dans votre HTML
             id_evenement = request.form.get('event_id') 
             
-            print("information recupérées")
+            if 'resume_file' not in request.files:
+                # Gérer le cas où le champ est manquant (devrait être rare si 'required' est dans le HTML)
+                return render_template('submission_form.html', event_id=id_evenement, error="Fichier de résumé manquant.")
+            file = request.files['resume_file']
+            if file.filename == '':
+                print("rien n'etait selectionne ")
+                return render_template('submission_form.html', event_id=id_evenement, error="Veuillez sélectionner un fichier.")
+
+            file_path_for_db = None 
+            
+            if file and allowed_file(file.filename):
+                print("On va securiser le fichier")
+                filename = secure_filename(file.filename)
+                
+                unique_filename = f"{id_user}_{id_evenement}_{filename}"
+                full_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                
+                # Sauvegarder le fichier
+                file.save(full_path)
+                
+                # C'est ce chemin (ou nom unique) que nous insérons dans la DB
+                file_path_for_db = unique_filename
+            else:
+                print("type de fichier non autorise")
+                return render_template('submission_form.html', event_id=id_evenement, error="Type de fichier non autorisé (PDF seulement).")
+            
+            # Utilisation du chemin du fichier dans la colonne 'resume'
+            # (Note : Le nom 'resume' est utilisé pour le chemin du fichier)
+            resume_content = file_path_for_db 
+            
+            print("information récupérées et fichier sauvegardé.")
             
             con = sqlite3.connect("database.db")
             cur = con.cursor()
             try:
                 cur.execute("""
-                    INSERT INTO Proposition (titre, resume, type, id_user, id_evenement, statut) 
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (titre, resume, type_prop, id_user, id_evenement, 'submitted'))
+                    INSERT INTO Proposition (titre, resume, type,keywords, id_user, id_evenement, statut) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (titre, resume_content, type_prop,mot_cles, id_user, id_evenement, 'submitted'))
                 con.commit()
             except Exception as e:
                 print(f"Erreur DB: {e}")
@@ -456,6 +500,24 @@ def submission_form():
     else:
         event_id = request.args.get('event_id')
         return render_template('submission_form.html', event_id=event_id)
+@app.route('/show_submissions', methods=['GET'])
+def show_submissions():
+    user_id = session.get("user_id")
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    soumissions = []
+    
+    if session.get('role') == 'admin':
+        cur.execute("""SELECT * FROM Proposition""")
+        soumissions = cur.fetchall()
+    else:
+        cur.execute("""SELECT * FROM Proposition WHERE id_user=?""", (user_id,))
+        soumissions = cur.fetchall() 
+    con.close()
+    return render_template('show_submissions.html', soumissions=soumissions)
+  
+
+
 if __name__ == '__main__':
     setup_database()
     app.run(debug=True,host="0.0.0.0",port=5000)

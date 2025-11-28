@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulter les Propositions Soumises</title>
+</head>
+<body>
+    {% if not soumissions %}
+      <h1>There's no submissions</h1>
+    {% endif %}  
+    
+      {% for row in soumissions  %}  
+     <h2>Titre: {{ row[1] }}</h2>
+            <p><strong>ID Proposition:</strong> {{ row[0] }}</p>
+            <p><strong>Type:</strong> {{ row[3] }}</p>
+            <p><strong>Mots-clés:</strong> {{ row[4] }}</p>
+            <p><strong>Statut:</strong> 
+                    {{ row[6].upper() }}
+                
+            </p>
+            
+            <p><strong>ID Événement:</strong> {{ row[8] }}</p>
+            <p><strong>Chemin du Fichier (Résumé):</strong> <code>{{ row[2] }}</code></p>
+      {% endfor  %}
+    
+</body>
+</html>
