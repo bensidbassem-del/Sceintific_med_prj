@@ -3,31 +3,495 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events List</title>
+    <title>Scientific Event Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f9ff;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: #fff;
+            padding: 20px;
+            position: fixed;
+            border-radius: 0 25px 25px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .sidebar h1 {
+            font-size: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar p {
+            text-align: center;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .sss a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            color: #f6f6f6;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .sss a:hover {
+            background-color: #06e4ce;
+            color: #210ce1;
+            transform: scale(0.98);
+        }
+
+        .sss svg {
+            margin-right: 10px;
+        }
+
+        .logbtn input[type="button"] {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            background-color: #cbf9f2;
+            color: rgb(24, 23, 23);
+            cursor: pointer;
+            transition: 0.3s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 90%;
+            font-weight: 500;
+        }
+
+        .logbtn input[type="button"]:hover {
+            background-color: #06e4ce;
+            color: #210ce1;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .h1 {
+            font-size: 36px;
+            text-align: center;
+            font-weight: 700;
+            color: #0ea5e9;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+    .card-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    width: 100%;
+}
+        
+
+        .card-event {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-event:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .card-header h2 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .theme-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .description {
+            font-style: italic;
+            color: #666;
+            border-left: 3px solid #0ea5e9;
+            padding-left: 12px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .event-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .event-detail {
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.95rem;
+        }
+
+        .event-detail svg {
+            margin-right: 10px;
+            color: #0ea5e9;
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .event-detail span {
+            line-height: 1.4;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .card-actions form {
+            flex: 1;
+        }
+
+        .card-actions input[type="submit"],
+        .card-actions input[type="button"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background-color: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+        }
+
+     
+
+        @media (max-width: 1024px) {
+            .card-list {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                margin-left: 220px;
+                padding: 20px;
+            }
+            
+            .card-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-radius: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>All Events</h1>
-    <ul>
-        
-        {% for row in data %}
     
-        <li>
-            <h2>{{ row[1] }}</h2>
-            <p>{{ row[2] }}</p>
-            <p>Start Date: {{ row[3] }}</p>
-            <p>End Date: {{ row[4] }}</p>
-            <p>Location: {{ row[5] }}</p>
-            <p>Theme: {{ row[6] }}</p>
-        </li>
-      <form method="POST" action="/deleteevent" style="display: inline;">
-    <input type="hidden" name="id" value="{{ row[0] }}">
-    <input type="submit" value="Delete Event" 
-           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
-    </form>
-      <form method="get" >
-        <input type="button" value="Submit proposal" onclick="location.href='/submission_form?event_id={{ row[0] }}'">
-      </form>
+    <div class="sidebar">
+        <h1>Scientific Event Platform</h1>
+        <p>User Dashboard</p>
+        <div class="content">
+            <div class="sss">
+                <a href="#dash">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+                        <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
+                    </svg> Dashboard
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#event">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+                        <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
+                    </svg> Events
+                </a>
+            </div>
+            <div class="sss">
+                <a href="show_submissions.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5zM3 3H2v1h1z"/>
+                        <path d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1z"/>
+                        <path fill-rule="evenodd" d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5zM2 7h1v1H2zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm1 .5H2v1h1z"/>
+                    </svg> My Submissions
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#cert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mortarboard-fill" viewBox="0 0 16 16">
+                        <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917z"/>
+                        <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466z"/>
+                    </svg> My Certification
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#msg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                        <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
+                    </svg> Messages
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#setti">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                        <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                    </svg> Settings
+                </a>
+            </div>
+            <div class="logbtn">
+                <input type="button" value="Logout" onclick="location.href='/logout'">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+
+    <h1 class="h1">All Events</h1>
+
+    <div class="card-list">
+
+        {% for row in data %}
+        <div class="card-event">
+
+            <div class="card-header">
+                <h2>{{ row[1] }}</h2>
+                <span class="theme-tag">{{ row[6] }}</span>
+            </div>
+
+            <div class="card-body">
+
+                <p class="description">{{ row[2] }}</p>
+
+                <div class="event-details">
+
+                    <div class="event-detail">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-calendar-event" viewBox="0 0 16 16">
+                            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                        </svg>
+                        <span><strong>Start:</strong> {{ row[3] }} | <strong>End:</strong> {{ row[4] }}</span>
+                    </div>
+
+                    <div class="event-detail">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                             fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94"/>
+                            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                        </svg>
+
+                        <span>{{ row[5] }}</span>
+                    </div>
+
+                </div>
+
+                <div class="card-actions">
+
+                    <form method="POST" action="/deleteevent">
+                        <input type="hidden" name="id" value="{{ row[0] }}">
+                        <input type="submit" value="Delete Event"
+                               class="delete-btn"
+                               onclick="return confirm('Are you sure you want to delete this event?')">
+                    </form>
+
+                    <form method="get">
+                        <input type="hidden" name="event_id" value="{{ row[0] }}">
+                        <input type="button"
+                               class="submit-btn"
+                               value="Submit Proposal"
+                               onclick="location.href='/submission_form?event_id={{ row[0] }}'">
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+
+    </div>
+       
+        <div class="card-list">
+            
+            <div class="card-event">
+                <div class="card-header">
+                    <h2>International Conference on AI Research</h2>
+                    <span class="theme-tag">Artificial Intelligence</span>
+                </div>
+                <div class="card-body">
+                    <p class="description">A premier gathering of AI researchers and practitioners to discuss the latest advancements in machine learning and neural networks.</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event" viewBox="0 0 16 16">
+                                <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                            </svg>
+                            <span><strong>Start:</strong> 2023-10-15 | <strong>End:</strong> 2023-10-18</span>
+                        </div>
+                        <div class="event-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            </svg>
+                            <span>San Francisco, CA, USA</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <form method="POST" action="/deleteevent" style="display: inline;">
+                            <input type="hidden" name="id" value="1">
+                            <input type="submit" value="Delete Event" class="delete-btn" 
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
+                        </form>
+                        <form method="get">
+                            <input type="hidden" name="event_id" value="1">
+                            <input type="button" value="Submit Proposal" class="submit-btn" 
+                                   onclick="location.href='/submission_form?event_id=1'">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-event">
+                <div class="card-header">
+                    <h2>Climate Change Symposium 2023</h2>
+                    <span class="theme-tag">Environmental Science</span>
+                </div>
+                <div class="card-body">
+                    <p class="description">An interdisciplinary conference focusing on climate science, policy, and sustainable solutions for a changing planet.</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event" viewBox="0 0 16 16">
+                                <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                            </svg>
+                            <span><strong>Start:</strong> 2023-11-05 | <strong>End:</strong> 2023-11-08</span>
+                        </div>
+                        <div class="event-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            </svg>
+                            <span>Virtual Event</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <form method="POST" action="/deleteevent" style="display: inline;">
+                            <input type="hidden" name="id" value="2">
+                            <input type="submit" value="Delete Event" class="delete-btn" 
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
+                        </form>
+                        <form method="get">
+                            <input type="hidden" name="event_id" value="2">
+                            <input type="button" value="Submit Proposal" class="submit-btn" 
+                                   onclick="location.href='/submission_form?event_id=2'">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+</div>
+
 </body>
 </html>
