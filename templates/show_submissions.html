@@ -1,28 +1,570 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulter les Propositions Soumises</title>
+    <title>My Submissions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: #fff;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            border-radius: 0 25px 25px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .sidebar h1 {
+            font-size: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar p {
+            text-align: center;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .sss a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            color: #f6f6f6;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sss a:hover {
+            background-color: #06e4ce;
+            color: #210ce1;
+            transform: translateX(5px);
+        }
+
+        .sss svg {
+            margin-right: 10px;
+        }
+
+        .logbtn input[type="button"] {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background-color: #cbf9f2;
+            color: rgb(24, 23, 23);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 90%;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .logbtn input[type="button"]:hover {
+            background-color: #06e4ce;
+            color: #210ce1;
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header-content {
+            flex: 1;
+        }
+
+        .page-header h1 {
+            color: #1e40af;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .add-submission-btn {
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+             text-decoration: none;
+        }
+
+        .add-submission-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(14, 165, 233, 0.4);
+        }
+
+        .empty-state {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h2 {
+            color: #64748b;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .submissions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 35px;
+            row-gap: 40px;
+        }
+
+        .submission-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 5px solid #0ea5e9;
+        }
+
+        .submission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .submission-card h2 {
+            color: #1e40af;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-item strong {
+            color: #64748b;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .info-item span {
+            color: #1e293b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .file-path {
+            background-color: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #475569;
+            border: 1px dashed #cbd5e1;
+            word-break: break-all;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .keyword-tag {
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+     
+        @media (max-width: 576px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-radius: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    {% if not soumissions %}
-      <h1>There's no submissions</h1>
-    {% endif %}  
-    
-      {% for row in soumissions  %}  
-     <h2>Titre: {{ row[1] }}</h2>
-            <p><strong>ID Proposition:</strong> {{ row[0] }}</p>
-            <p><strong>Type:</strong> {{ row[3] }}</p>
-            <p><strong>Mots-clés:</strong> {{ row[4] }}</p>
-            <p><strong>Statut:</strong> 
-                    {{ row[6].upper() }}
+    <div class="sidebar">
+        <h1>Scientific Events Platform</h1>
+        <p>Admin Dashboard</p>
+        <div class="content">
+            <div class="sss">
+                <a href="#dash">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+                        <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
+                    </svg> Home
+                </a>
+            </div>
+            <div class="sss">
+                <a href="show_event.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+                        <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
+                    </svg> Events
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#subm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5zM3 3H2v1h1z"/>
+                        <path d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1z"/>
+                        <path fill-rule="evenodd" d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5zM2 7h1v1H2zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm1 .5H2v1h1z"/>
+                    </svg> My Submissions
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#cert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mortarboard-fill" viewBox="0 0 16 16">
+                        <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917z"/>
+                        <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466z"/>
+                    </svg> My Certificates
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#msg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                        <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
+                    </svg> Messages
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#setti">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                        <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.820.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                    </svg> Settings
+                </a>
+            </div>
+            <div class="logbtn">
+                <input type="button" value="Logout" onclick="location.href='/logout'">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div class="page-header-content">
+                <h1>My Submissions</h1>
+                <p>View all submissions you have made to scientific events</p>
+            </div>
+          <a href="submissions_form.html" class="add-submission-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    </svg>
+    Add Submission
+</a>
+
+        </div>
+
+        {% if not soumissions %}
+        <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
+            </svg>
+            <h2>No Submissions</h2>
+            <p>You haven't submitted any proposals yet</p>
+        </div>
+        {% endif %}
+
+        <div class="submissions-grid">
+            {% for row in soumissions %}
+            <div class="submission-card">
+                <h2>{{ row[1] }}</h2>
                 
-            </p>
-            
-            <p><strong>ID Événement:</strong> {{ row[8] }}</p>
-            <p><strong>Chemin du Fichier (Résumé):</strong> <code>{{ row[2] }}</code></p>
-      {% endfor  %}
-    
+                <div class="info-item">
+                    <strong>Submission ID</strong>
+                    <span>#{{ row[0] }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Type</strong>
+                    <span class="type-badge">{{ row[3] }}</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Status</strong>
+                    {% if row[6].upper() == 'PENDING' %}
+                    <span class="status-badge status-pending">{{ row[6].upper() }}</span>
+                    {% elif row[6].upper() == 'APPROVED' %}
+                    <span class="status-badge status-approved">{{ row[6].upper() }}</span>
+                    {% elif row[6].upper() == 'REJECTED' %}
+                    <span class="status-badge status-rejected">{{ row[6].upper() }}</span>
+                    {% else %}
+                    <span class="status-badge">{{ row[6].upper() }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="info-item">
+                    <strong>Event ID</strong>
+                    <span>#EV-{{ row[8] }}</span>
+                </div>
+
+                <div class="info-item">
+                    <strong>Keywords</strong>
+                    <div class="keywords">
+                        {% if row[4] %}
+                            {% set keywords = row[4].split(',') %}
+                            {% for keyword in keywords %}
+                                {% if keyword.strip() %}
+                                    <span class="keyword-tag">{{ keyword.strip() }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <strong>File Path (Abstract)</strong>
+                    <div class="file-path">{{ row[2] }}</div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Submission 1 -->
+            <div class="submission-card">
+                <h2>Applications of Artificial Intelligence in Education</h2>
+                
+                <div class="info-item">
+                    <strong>Submission ID</strong>
+                    <span>#12345</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Type</strong>
+                    <span class="type-badge">Full Research</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Status</strong>
+                    <span class="status-badge status-approved">APPROVED</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Event ID</strong>
+                    <span>#EV-2024-001</span>
+                </div>
+
+                <div class="info-item">
+                    <strong>Keywords</strong>
+                    <div class="keywords">
+                        <span class="keyword-tag">AI</span>
+                        <span class="keyword-tag">Education</span>
+                        <span class="keyword-tag">Technology</span>
+                        <span class="keyword-tag">Machine Learning</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <strong>File Path (Abstract)</strong>
+                    <div class="file-path">/uploads/submissions/2024/abstract_12345.pdf</div>
+                </div>
+            </div>
+
+            <!-- Submission 2 -->
+            <div class="submission-card">
+                <h2>Big Data Analysis in Healthcare Sector</h2>
+                
+                <div class="info-item">
+                    <strong>Submission ID</strong>
+                    <span>#12346</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Type</strong>
+                    <span class="type-badge">Abstract</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Status</strong>
+                    <span class="status-badge status-pending">PENDING</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Event ID</strong>
+                    <span>#EV-2024-002</span>
+                </div>
+
+                <div class="info-item">
+                    <strong>Keywords</strong>
+                    <div class="keywords">
+                        <span class="keyword-tag">Big Data</span>
+                        <span class="keyword-tag">Healthcare</span>
+                        <span class="keyword-tag">Data Analysis</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <strong>File Path (Abstract)</strong>
+                    <div class="file-path">/uploads/submissions/2024/abstract_12346.pdf</div>
+                </div>
+            </div>
+
+            <!-- Submission 3 -->
+            <div class="submission-card">
+                <h2>Cybersecurity in Internet of Things</h2>
+                
+                <div class="info-item">
+                    <strong>Submission ID</strong>
+                    <span>#12347</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Type</strong>
+                    <span class="type-badge">Presentation</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Status</strong>
+                    <span class="status-badge status-rejected">REJECTED</span>
+                </div>
+                
+                <div class="info-item">
+                    <strong>Event ID</strong>
+                    <span>#EV-2024-001</span>
+                </div>
+
+                <div class="info-item">
+                    <strong>Keywords</strong>
+                    <div class="keywords">
+                        <span class="keyword-tag">Cybersecurity</span>
+                        <span class="keyword-tag">IoT</span>
+                        <span class="keyword-tag">Security</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <strong>File Path (Abstract)</strong>
+                    <div class="file-path">/uploads/submissions/2024/abstract_12347.pdf</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
