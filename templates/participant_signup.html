@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Participant Signup</title>
+</head>
+<body>
+
+<h2>Register for an Event</h2>
+
+<form action="{{ url_for('register_participant') }}" method="POST">
+
+    <label>Select Event:</label>
+    <select name="event_id" required>
+        {% for event in events %}
+            <option value="{{ event[0] }}">{{ event[1] }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label>Ticket Type:</label>
+    <select name="ticket_type">
+        <option value="standard">Standard</option>
+        <option value="vip">VIP</option>
+    </select>
+    <br><br>
+
+    <button type="submit">Register</button>
+
+</form>
+
+</body>
+</html>
