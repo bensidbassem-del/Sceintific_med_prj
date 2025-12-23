@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rapport d'Évaluation</title>
+</head>
+<body>
+    <h2>Rapport d'Évaluation pour: {{ proposition[0] }}</h2>
+    <p>Type: {{ proposition[1] }}</p>
+    <p>Date de soumission: {{ proposition[2] }}</p>
+
+    <h3>Évaluations</h3>
+    {% if evaluations %}
+    <table>
+        <tr>
+            <th>Évaluateur</th>
+            <th>Pertinence</th>
+            <th>Qualité</th>
+            <th>Originalité</th>
+            <th>Commentaires</th>
+            <th>Recommandation</th>
+            <th>Date Évaluation</th>
+        </tr>
+        {% for e in evaluations %}
+        <tr>
+            <td>{{ e[0] }}</td>
+            <td>{{ e[1] }}</td>
+            <td>{{ e[2] }}</td>
+            <td>{{ e[3] }}</td>
+            <td>{{ e[4] }}</td>
+            <td>{{ e[5] }}</td>
+            <td>{{ e[6] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Aucune évaluation disponible pour cette proposition.</p>
+    {% endif %}
+
+    <a href="{{ url_for('userpage') }}">Retour au Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Propositions Assignées</title>
+</head>
+<body>
+    <h2>Propositions Assignées à Moi</h2>
+
+    {% if propositions %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Résumé</th>
+            <th>Keywords</th>
+            <th>Action</th>
+        </tr>
+        {% for p in propositions %}
+        <tr>
+            <td>{{ p[0] }}</td>
+            <td>{{ p[1] }}</td>
+            <td>
+                {% if p[2] %}
+                    <a href="{{ url_for('static', filename='proposals/' + p[2]) }}" target="_blank">Télécharger</a>
+                {% else %}
+                    Aucun fichier
+                {% endif %}
+            </td>
+            <td>{{ p[3] }}</td>
+            <td>
+                <a href="{{ url_for('evaluate_form', prop_id=p[0]) }}">Évaluer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Aucune proposition assignée pour le moment.</p>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('userpage') }}">Retour au Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Évaluation</title>
+</head>
+<body>
+
+<h2>Évaluer la proposition</h2>
+
+<form method="post" action="{{ url_for('evaluate') }}">
+    <input type="hidden" name="id_proposition" value="{{ prop_id }}">
+
+    Pertinence (1–5):
+    <input type="number" name="note_pertinence" min="1" max="5" required><br><br>
+
+    Qualité scientifique (1–5):
+    <input type="number" name="note_qualite" min="1" max="5" required><br><br>
+
+    Originalité (1–5):
+    <input type="number" name="note_originalite" min="1" max="5" required><br><br>
+
+    Commentaires:<br>
+    <textarea name="commentaires" rows="4" cols="40"></textarea><br><br>
+
+    Recommandation:
+    <select name="recommandation">
+        <option value="accepted">Acceptée</option>
+        <option value="rejected">Rejetée</option>
+    </select><br><br>
+
+    <button type="submit">Soumettre l’évaluation</button>
+</form>
+
+</body>
+</html>
