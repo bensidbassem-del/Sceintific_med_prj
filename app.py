@@ -4,6 +4,9 @@ from werkzeug.security import check_password_hash,generate_password_hash
 from flask import session
 import os 
 from werkzeug.utils import secure_filename
+from datetime import datetime
+import uuid
+
 app = Flask(__name__)
 app.secret_key = 'bassem'
 
@@ -80,8 +83,8 @@ def setup_database():
     recommandation TEXT,
     date_evaluation DATETIME DEFAULT CURRENT_TIMESTAMP  )
     """)
+    
     #Committee table
-
     cur.execute("""
     CREATE TABLE IF NOT EXISTS event_committee (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,7 +96,6 @@ def setup_database():
    """)
 
 #Speakers table
-
     cur.execute("""
      CREATE TABLE IF NOT EXISTS speakers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,6 +106,19 @@ def setup_database():
     FOREIGN KEY(event_id) REFERENCES events(id)
     )
      """)
+ #participant registrations
+ cur.execute("""
+     CREATE TABLE IF NOT EXISTS Inscription (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type_inscription TEXT,
+    statut_paiement TEXT DEFAULT 'pending',
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id_user INTEGER,
+    id_evenement INTEGER,
+    badge_generated BOOLEAN DEFAULT FALSE,
+    badge_code TEXT
+)
+    """)
 
     # Create admin user with hashed password
     admin_hash = generate_password_hash('admin')
@@ -515,7 +530,132 @@ def show_submissions():
         soumissions = cur.fetchall() 
     con.close()
     return render_template('show_submissions.html', soumissions=soumissions)
-  
+
+@app.route('/participant_signup')
+def participant_signup():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('accueil'))
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT id, event_title FROM events WHERE status='upcoming'")
+    events = cur.fetchall()
+    con.close()
+
+    return render_template('participant_signup.html', events=events)
+
+
+@app.route('/register_participant', methods=['POST'])
+def register_participant():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('accueil'))
+
+    event_id = request.form.get('event_id')
+    type_inscription = request.form.get('ticket_type', 'standard')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        INSERT INTO Inscription (id_evenement, id_user, type_inscription)
+        VALUES (?, ?, ?)
+    """, (event_id, user_id, type_inscription))
+
+    con.commit()
+    insc_id = cur.lastrowid
+    con.close()
+
+    return redirect(url_for('registration_confirmation', id=insc_id))
+
+
+@app.route('/registration_confirmation')
+def registration_confirmation():
+    insc_id = request.args.get('id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT i.id, i.date_inscription, i.statut_paiement, e.event_title
+        FROM Inscription i
+        JOIN events e ON i.id_evenement = e.id
+        WHERE i.id=?
+    """, (insc_id,))
+
+    reg = cur.fetchone()
+    con.close()
+
+    return render_template('registration_confirmation.html', reg=reg)
+
+@app.route('/update_payment', methods=['POST'])
+def update_payment():
+    role = session.get('role')
+    if role not in ('admin', 'super_admin'):
+        return "Unauthorized", 403
+
+    insc_id = request.form.get('registration_id')
+    new_status = request.form.get('status')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        UPDATE Inscription
+        SET statut_paiement=?
+        WHERE id=?
+    """, (new_status, insc_id))
+
+    con.commit()
+    con.close()
+
+    return redirect(url_for('admindashboard'))
+
+@app.route('/generate_badge', methods=['POST'])
+def generate_badge():
+    role = session.get('role')
+    if role not in ('admin', 'super_admin'):
+        return "Unauthorized", 403
+
+    insc_id = request.form.get('registration_id')
+    badge_code = str(uuid.uuid4())[:8]
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        UPDATE Inscription
+        SET badge_generated=TRUE, badge_code=?
+        WHERE id=?
+    """, (badge_code, insc_id))
+
+    con.commit()
+    con.close()
+
+    return redirect(url_for('badge', id=insc_id))
+
+@app.route('/badge')
+def badge():
+    insc_id = request.args.get('id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT i.id, i.badge_code,
+               e.event_title, e.event_start_date,
+               u.username, u.institution
+        FROM Inscription i
+        JOIN users u ON i.id_user = u.id
+        JOIN events e ON i.id_evenement = e.id
+        WHERE i.id=?
+    """, (insc_id,))
+
+    data = cur.fetchone()
+    con.close()
+
+    return render_template('badge.html', info=data)
 
 
 if __name__ == '__main__':
