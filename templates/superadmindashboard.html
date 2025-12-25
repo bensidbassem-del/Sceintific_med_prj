@@ -3,21 +3,647 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Super Admin Dashboard - Scientific Event Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: #fff;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            border-radius: 0 25px 25px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .sidebar h1 {
+            font-size: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar p {
+            text-align: center;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .sss a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            color: #f6f6f6;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sss a:hover, .sss a.active {
+            background-color: #fca5a5;
+            color: #7f1d1d;
+            transform: translateX(5px);
+        }
+
+        .sss svg {
+            margin-right: 10px;
+        }
+
+        .logbtn input[type="button"] {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background-color: #fecaca;
+            color: #7f1d1d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 90%;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .logbtn input[type="button"]:hover {
+            background-color: #fca5a5;
+            color: #450a0a;
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .welcome-header {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #dc2626;
+        }
+
+        .welcome-header h1 {
+            color: #991b1b;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .super-admin-badge {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 5px solid #dc2626;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(153, 27, 27, 0.1));
+            border-radius: 0 0 0 100px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .stat-icon svg {
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #991b1b;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-management {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .user-management h2 {
+            color: #991b1b;
+            font-size: 24px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .forms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .form-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .form-card:hover {
+            border-color: #dc2626;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .form-card h3 {
+            color: #991b1b;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .form-group input[type="email"]:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .form-group input[type="email"]::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-card input[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .find-form input[type="submit"] {
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .find-form input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(14, 165, 233, 0.4);
+        }
+
+        .delete-form input[type="submit"] {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .delete-form input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4);
+        }
+
+        .quick-actions {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .quick-actions h2 {
+            color: #991b1b;
+            font-size: 24px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .action-button:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border-color: #dc2626;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+
+        .action-button:hover .action-icon {
+            background: white;
+        }
+
+        .action-button:hover .action-icon svg {
+            color: #dc2626;
+        }
+
+        .action-button:hover .action-text {
+            color: white;
+        }
+
+        .action-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .action-icon svg {
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .action-text {
+            color: #991b1b;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .warning-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                padding: 20px;
+            }
+
+            .stats-grid, .forms-grid, .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-radius: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .welcome-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="sidebar">
+        <h1>Scientific Event Platform</h1>
+        <p>Super Admin Panel</p>
+        <div class="content">
+            <div class="sss">
+                <a href="#dash" class="active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shield-fill-check" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.8 11.8 0 0 0 2.517 2.453c.386.273.744.482 1.048.625.28.132.581.24.829.24s.548-.108.829-.24a7 7 0 0 0 1.048-.625 11.8 11.8 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.54 1.54 0 0 0-1.044-1.263 63 63 0 0 0-2.887-.87C9.843.266 8.69 0 8 0m2.146 5.146a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793z"/>
+                    </svg> Dashboard
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#users">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg> User Management
+                </a>
+            </div>
+            <div class="sss">
+                <a href="/show_events">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+                        <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
+                    </svg> Events
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#system">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-server" viewBox="0 0 16 16">
+                        <path d="M1.333 2.667C1.333 1.194 4.318 0 8 0s6.667 1.194 6.667 2.667V4c0 1.473-2.985 2.667-6.667 2.667S1.333 5.473 1.333 4z"/>
+                        <path d="M1.333 6.334v3C1.333 10.805 4.318 12 8 12s6.667-1.194 6.667-2.667V6.334a6.5 6.5 0 0 1-1.458.79C11.81 7.684 9.967 8 8 8s-3.809-.317-5.208-.876a6.5 6.5 0 0 1-1.458-.79z"/>
+                        <path d="M14.667 11.668a6.5 6.5 0 0 1-1.458.789c-1.4.56-3.242.876-5.21.876-1.966 0-3.809-.316-5.208-.876a6.5 6.5 0 0 1-1.458-.79v1.666C1.333 14.806 4.318 16 8 16s6.667-1.194 6.667-2.667z"/>
+                    </svg> System Settings
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#logs">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text-fill" viewBox="0 0 16 16">
+                        <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5 4h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1m-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1m0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1"/>
+                    </svg> Activity Logs
+                </a>
+            </div>
+            <div class="sss">
+                <a href="#reports">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
+                        <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/>
+                    </svg> Reports
+                </a>
+            </div>
+            <div class="logbtn">
+                <input type="button" value="Logout" onclick="location.href='/logout'">
+            </div>
+        </div>
+    </div>
 
+    <div class="main-content">
+        <div class="welcome-header">
+            <div>
+                <h1>Super Admin Control Panel</h1>
+                <p>Full system access and management capabilities</p>
+            </div>
+            <div class="super-admin-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.8 11.8 0 0 0 2.517 2.453c.386.273.744.482 1.048.625.28.132.581.24.829.24s.548-.108.829-.24a7 7 0 0 0 1.048-.625 11.8 11.8 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.54 1.54 0 0 0-1.044-1.263 63 63 0 0 0-2.887-.87C9.843.266 8.69 0 8 0"/>
+                </svg>
+                Super Admin
+            </div>
+        </div>
 
-    <form action="/find" method="get">
-    <input type="email" name="email" placeholder="Enter email">
-    <input type="submit" value="Find User">
-    </form>
-    <form action="/deleteuser" method="get">
-    <input type="email" name="email" placeholder="Enter email to delete">
-    <input type="submit" value="Delete User">
-    </form>
-    <input type="button" value="Create Event" onclick="location.href='/create_event'">
-    <input type="button" value="View All Events" onclick="location.href='/show_events'">
-    <input type="button" value="Logout" onclick="location.href='/logout'">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg>
+                </div>
+                <div class="stat-number">1,247</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M10 8c-.552 0-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5S10.552 8 10 8"/>
+                    </svg>
+                </div>
+                <div class="stat-number">45</div>
+                <div class="stat-label">Admins</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/>
+                    </svg>
+                </div>
+                <div class="stat-number">24</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M1.333 2.667C1.333 1.194 4.318 0 8 0s6.667 1.194 6.667 2.667V4c0 1.473-2.985 2.667-6.667 2.667S1.333 5.473 1.333 4z"/>
+                        <path d="M1.333 6.334v3C1.333 10.805 4.318 12 8 12s6.667-1.194 6.667-2.667V6.334a6.5 6.5 0 0 1-1.458.79C11.81 7.684 9.967 8 8 8s-3.809-.317-5.208-.876a6.5 6.5 0 0 1-1.458-.79z"/>
+                    </svg>
+                </div>
+                <div class="stat-number">98.5%</div>
+                <div class="stat-label">System Uptime</div>
+            </div>
+        </div>
+
+        <div class="user-management">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+                </svg>
+                User Management
+            </h2>
+            
+            <div class="warning-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                </svg>
+                Use with caution - These actions have permanent effects
+            </div>
+<div class="forms-grid">
+            <div class="form-card find-form">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                    </svg>
+                    Find User
+                </h3>
+                <form action="/find" method="get">
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Enter email" required>
+                    </div>
+                    <input type="submit" value="Find User">
+                </form>
+            </div>
+
+            <div class="form-card delete-form">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                    </svg>
+                    Delete User
+                </h3>
+                <form action="/deleteuser" method="get">
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Enter email to delete" required>
+                    </div>
+                    <input type="submit" value="Delete User" onclick="return confirm('Are you sure? This action cannot be undone!')">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+            </svg>
+            Quick Actions
+        </h2>
+        <div class="actions-grid">
+            <div class="action-button" onclick="location.href='/create_event'" style="cursor: pointer;">
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                    </svg>
+                </div>
+                <span class="action-text">Create Event</span>
+            </div>
+
+            <div class="action-button" onclick="location.href='/show_events'" style="cursor: pointer;">
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4z"/>
+                        <path d="M16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2M9.5 7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5m3 0h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5M2 10.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
+                    </svg>
+                </div>
+                <span class="action-text">View All Events</span>
+            </div>
+
+            <div class="action-button" onclick="location.href='#system'" style="cursor: pointer;">
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                    </svg>
+                </div>
+                <span class="action-text">System Settings</span>
+            </div>
+
+            <div class="action-button" onclick="location.href='#logs'" style="cursor: pointer;">
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5 4h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1m-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1m0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1"/>
+                    </svg>
+                </div>
+                <span class="action-text">View Activity Logs</span>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
