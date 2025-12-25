@@ -469,9 +469,9 @@
             const scoreBadges = document.querySelectorAll('.score-badge');
             scoreBadges.forEach(badge => {
                 const value = parseFloat(badge.textContent);
-                if (value >= 7) {
+                if (value >= 4) {
                     badge.classList.add('score-high');
-                } else if (value >= 5) {
+                } else if (value >= 2.5) {
                     badge.classList.add('score-medium');
                 } else {
                     badge.classList.add('score-low');
