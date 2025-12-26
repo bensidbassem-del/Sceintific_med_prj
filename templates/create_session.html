@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Session</title>
+</head>
+<body>
+    <form method="post" action="/create_session">
+        <label for="title">Session Title:</label>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <label for="time">Session Time:</label>
+        <input type="time" id="time" name="time" required><br><br>
+
+        <label for="room">Room:</label>
+        <input type="text" id="room" name="room" required><br><br>
+
+        <label for="chairman">Chairman:</label>
+        <input type="text" id="chairman" name="chairman" required><br><br>
+
+        <button type="submit">Create Session</button>
+    </form>
+</body>
+</html>

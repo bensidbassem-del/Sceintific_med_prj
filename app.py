@@ -6,7 +6,7 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import uuid
-
+import random
 app = Flask(__name__)
 app.secret_key = 'bassem'
 
@@ -49,16 +49,7 @@ def setup_database():
                  organiser_id INTEGER,
                  status TEXT DEFAULT 'upcoming',
                  FOREIGN KEY (organiser_id) REFERENCES users (id))""")
-    cur.execute(""" 
-    CREATE TABLE IF NOT EXISTS Inscription (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type_inscription TEXT,
-    statut_paiement TEXT,
-    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
-    id_user INTEGER,
-    id_evenement INTEGER
-      )"""  
-    )
+   
     cur.execute("""
       CREATE TABLE IF NOT EXISTS Proposition (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,17 +63,14 @@ def setup_database():
     id_evenement INTEGER
      )"""
     )
-    cur.execute("""
-     CREATE TABLE IF NOT EXISTS Evaluation (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_proposition INTEGER,
-    id_evaluateur INTEGER,
-    note_qualite INTEGER,
-    note_originalite INTEGER,
-    commentaires TEXT,
-    recommandation TEXT,
-    date_evaluation DATETIME DEFAULT CURRENT_TIMESTAMP  )
-    """)
+    cur.execute(""" CREATE TABLE IF NOT EXISTS Evaluation ( id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 id_proposition INTEGER, 
+                id_evaluateur INTEGER,
+                 note_pertinence INTEGER, 
+                note_qualite INTEGER, 
+                note_originalite INTEGER, 
+                commentaires TEXT, recommandation TEXT, 
+                date_evaluation DATETIME DEFAULT CURRENT_TIMESTAMP ) """)
     
     #Committee table
     cur.execute("""
@@ -119,6 +107,18 @@ def setup_database():
     badge_code TEXT
 )
     """)
+    #une table qui relie une proposition et un evaluateur
+    cur.execute("""
+CREATE TABLE IF NOT EXISTS ReviewerAssignment (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_proposition INTEGER,
+    id_reviewer INTEGER,
+    assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(id_proposition) REFERENCES Proposition(id),
+    FOREIGN KEY(id_reviewer) REFERENCES users(id)
+)
+""")
+
 
     # Create admin user with hashed password
     admin_hash = generate_password_hash('admin')
@@ -687,6 +687,197 @@ def badge():
 
     return render_template('badge.html', info=data)
 
+
+#affectation auto des propositions aux evaluateurs
+@app.route('/auto_assign_reviewers', methods=['POST'])
+def auto_assign_reviewers():
+    if session.get('role') not in ['admin', 'super_admin']:
+        return "Unauthorized", 403
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    #  Propositions non encore évaluées
+    cur.execute("""
+        SELECT id, id_evenement
+        FROM Proposition
+        WHERE statut='submitted'
+    """)
+    propositions = cur.fetchall()
+
+    for prop_id, event_id in propositions:
+
+        # Reviewers du comité de l'événement
+        cur.execute("""
+            SELECT user_id
+            FROM event_committee
+            WHERE event_id=?
+        """, (event_id,))
+        reviewers = [r[0] for r in cur.fetchall()]
+
+        if not reviewers:
+            continue
+
+        # Choisir max 3 reviewers aléatoires
+        selected = random.sample(reviewers, min(3, len(reviewers)))
+
+        for reviewer_id in selected:
+
+            # Vérifier doublon
+            cur.execute("""
+                SELECT 1 FROM ReviewerAssignment
+                WHERE id_proposition=? AND id_reviewer=?
+            """, (prop_id, reviewer_id))
+
+            if cur.fetchone():
+                continue  # déjà affecté → on ignore
+
+            # Insérer l’affectation
+            cur.execute("""
+                INSERT INTO ReviewerAssignment (id_proposition, id_reviewer)
+                VALUES (?, ?)
+            """, (prop_id, reviewer_id))
+
+    con.commit()
+    con.close()
+
+    return redirect(url_for('show_submissions'))
+
+
+#Liste des propositions assignées à un reviewer
+@app.route('/assigned_to_me')
+def assigned_to_me():
+    if session.get('role') != 'committee':
+        return "Unauthorized", 403
+
+    reviewer_id = session.get('user_id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT p.id, p.titre, p.resume, p.keywords
+        FROM Proposition p
+        JOIN ReviewerAssignment ra 
+             ON p.id = ra.id_proposition
+        WHERE ra.id_reviewer = ?
+    """, (reviewer_id,))
+
+    propositions = cur.fetchall()
+    con.close()
+
+    return render_template(
+        'assigned_list.html',
+        propositions=propositions
+    )
+#formulaire d'évaluation
+@app.route('/evaluate_form/<int:prop_id>')
+def evaluate_form(prop_id):
+    if session.get('role') != 'committee':
+        return "Unauthorized", 403
+    return render_template('evaluate.html', prop_id=prop_id)
+#Enregistrement de l’évaluation
+@app.route('/evaluate', methods=['POST'])
+def evaluate():
+    if session.get('role') != 'committee':
+        return "Unauthorized", 403
+
+    reviewer_id = session.get("user_id")
+    id_prop = request.form.get("id_proposition")
+
+    note_p = request.form.get("note_pertinence")
+    note_q = request.form.get("note_qualite")
+    note_o = request.form.get("note_originalite")
+    commentaires = request.form.get("commentaires")
+    recommandation = request.form.get("recommandation")
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    # Empêcher double évaluation
+    cur.execute("""
+        SELECT 1 FROM Evaluation
+        WHERE id_proposition=? AND id_evaluateur=?
+    """, (id_prop, reviewer_id))
+
+    if cur.fetchone():
+        con.close()
+        return "Déjà évaluée"
+
+    cur.execute("""
+        INSERT INTO Evaluation 
+        (id_proposition, id_evaluateur,
+         note_pertinence, note_qualite, note_originalite,
+         commentaires, recommandation)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
+        id_prop, reviewer_id,
+        note_p, note_q, note_o,
+        commentaires, recommandation
+    ))
+
+    cur.execute("""
+        UPDATE Proposition
+        SET statut='evaluated'
+        WHERE id=?
+    """, (id_prop,))
+
+    con.commit()
+    con.close()
+
+    return redirect(url_for('assigned_to_me'))
+
+#Rapport d’évaluation auto
+@app.route('/evaluation_report/<int:prop_id>')
+def evaluation_report(prop_id):
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT titre, type, date_soumission
+        FROM Proposition
+        WHERE id=?
+    """, (prop_id,))
+    proposition = cur.fetchone()
+
+    cur.execute("""
+        SELECT u.username,
+               e.note_pertinence,
+               e.note_qualite,
+               e.note_originalite,
+               e.commentaires,
+               e.recommandation,
+               e.date_evaluation
+        FROM Evaluation e
+        JOIN users u ON e.id_evaluateur = u.id
+        WHERE e.id_proposition=?
+    """, (prop_id,))
+    evaluations = cur.fetchall()
+
+    con.close()
+
+    return render_template(
+        "evaluation_report.html",
+        proposition=proposition,
+        evaluations=evaluations
+    )
+@app.route('/create_sessionpage')
+def create_sessionpage():
+    return render_template('create_session.html')
+@app.route('/create_session', methods=['POST'])
+def create_session():
+    user_id=session.get('id')
+    role=session.get('role')
+    if (role=='admin'):
+        titre=request.form.get('title')
+        time=request.form.get('time')
+        room=request.form.get('room')
+        chairman=request.form.get('chairman')
+        con = sqlite3.connect("database.db")
+        cur=con.cursor()
+        cur.execute("INSERT INTO Sessions (titre,time,room,chairman,user_id)VALUES (?,?,?,?,?)",(titre,time,room,chairman,user_id) )
+        con.commit()
+    return redirect(url_for('admindashboard'))    
 
 if __name__ == '__main__':
     setup_database()

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <title>Show User</title>
-    <style>
-        * {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Programme</title>
+
+<style>
+
+ * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -15,7 +16,7 @@
         body {
             display: flex;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            background-color: #f0f9ff;
             min-height: 100vh;
         }
 
@@ -26,7 +27,6 @@
             color: #fff;
             padding: 20px;
             position: fixed;
-            left: 0;
             border-radius: 0 25px 25px 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             z-index: 100;
@@ -44,7 +44,6 @@
             text-align: center;
             opacity: 0.8;
             margin-bottom: 30px;
-            font-size: 14px;
         }
 
         .sss a {
@@ -55,14 +54,14 @@
             color: #f6f6f6;
             text-decoration: none;
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: 0.3s;
             font-weight: 500;
         }
 
         .sss a:hover {
             background-color: #06e4ce;
             color: #210ce1;
-            transform: translateX(5px);
+            transform: scale(0.98);
         }
 
         .sss svg {
@@ -70,26 +69,24 @@
         }
 
         .logbtn input[type="button"] {
-            margin-top: 20px;
-            padding: 12px 15px;
+            margin-top: 15px;
+            padding: 10px 15px;
             border: none;
             border-radius: 10px;
             background-color: #cbf9f2;
             color: rgb(24, 23, 23);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
             display: block;
             margin-left: auto;
             margin-right: auto;
             width: 90%;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 500;
         }
 
         .logbtn input[type="button"]:hover {
             background-color: #06e4ce;
             color: #210ce1;
-            transform: scale(1.05);
         }
 
         .main-content {
@@ -99,152 +96,125 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            font-family: Arial, sans-serif;
         }
+        .main-content h1{
+    text-align:center;
+    margin-bottom:30px;
+    color: #1e40af;
+}
 
-        .main-content h1 {
-            font-size: 32px;
-            color: #1e293b;
-            margin-bottom: 30px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
-        }
 
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 35px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(14, 165, 233, 0.1);
-            position: relative;
-            overflow: hidden;
-             border-left: 4px solid #0ea5e9;
-        }
+.filters{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    max-width:600px;
+    margin:0 auto 40px;
+    flex-wrap:wrap;
+}
 
-     
+.filters input,
+.filters select{
+    padding:12px 16px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+    min-width:180px;
+    font-size:14px;
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
-        }
+.filters input:focus,
+.filters select:focus{
+    outline:none;
+    border-color:#0ea5e9;
+    box-shadow:0 0 0 2px rgba(14,165,233,.2);
+}
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f1f5f9;
-        }
+/* ===== Grid ===== */
+.sessions-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
 
-        .user-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-        }
+/* ===== Card ===== */
+.session-card{
+    background:white;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
 
-        .user-basic-info {
-            flex: 1;
-            margin-left: 20px;
-        }
+.session-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 30px rgba(0,0,0,.12);
+}
 
-        .card-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
-        }
+.session-time{
+    color:#0ea5e9;
+    font-weight:600;
+    margin-bottom:8px;
+}
+.session-date {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 4px;
+}
 
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
 
-        .info-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-        }
+.session-title{
+    font-size:16px;
+    font-weight:600;
+    margin-bottom:6px;
+}
 
-        .info-value {
-            font-size: 16px;
-            color: #1e293b;
-            font-weight: 500;
-            padding: 12px 16px;
-            background: #f8fafc;
-            border-radius: 10px;
-            border-left: 3px solid #0ea5e9;
-        }
+.session-desc{
+    font-size:14px;
+    color:#64748b;
+    margin-bottom:12px;
+}
 
-        .qr-section {
-            display: flex;
-            justify-content: center;
-            padding: 25px;
-            background: #f8fafc;
-            border-radius: 15px;
-            margin-bottom: 25px;
-        }
+.session-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
 
-        #qrcode {
-            padding: 15px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
+.type{
+    padding:5px 14px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
 
-        .card-actions {
-            display: flex;
-            justify-content: flex-end;
-            padding-top: 20px;
-            border-top: 2px solid #f1f5f9;
-        }
+.type-lecture{background:#dbeafe;color:#1e40af;}
+.type-workshop{background:#dcfce7;color:#166534;}
+.type-poster{background:#fef3c7;color:#92400e;}
+.type-keynote{background:#f3e8ff;color:#6b21a8;}
 
-        .card button[type="submit"] {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+.no-sessions{
+    text-align:center;
+    grid-column:1/-1;
+    font-size:18px;
+    color:#64748b;
+}
 
-        .card button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-        }
 
-        .card button[type="submit"]:active {
-            transform: translateY(0);
-        }
-
-           @media (max-width: 576px) {
-            body {
-                flex-direction: column;
-            }
-            
-            .sidebar {
+   
+        @media(max-width:1024px){
+    .sessions-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+    .sessions-grid{grid-template-columns:1fr;}
+   
+    .main-content{margin-left:0;}
+         .sidebar {
                 width: 100%;
                 height: auto;
                 position: relative;
@@ -255,11 +225,16 @@
                 margin-left: 0;
                 padding: 20px;
             }
-        }
-    </style>
+             body {
+                flex-direction: column;
+            }
+            
+}
+</style>
 </head>
+
 <body>
-    <div class="sidebar">
+     <div class="sidebar">
         <h1>Scientific Events Platform</h1>
         <p>Admin Dashboard</p>
         <div class="content">
@@ -314,51 +289,101 @@
             </div>
         </div>
     </div>
+<div class="main-content">
+    <h1>Scientific Programme</h1>
 
-    <div class="main-content">
-        <h1>User Information</h1>
-
-        {% for row in data %}
-        <div class="card">
-            <div class="card-header">
-                <div style="display: flex; align-items: center;">
-                    <div class="user-avatar">{{ row[1][:2] }}</div>
-                    <div class="user-basic-info">
-                        <h2 style="font-size: 24px; color: #1e293b; margin-bottom: 5px;">{{ row[1] }}</h2>
-                        <p style="color: #64748b; font-size: 14px;">{{ row[5] }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-content">
-                <div class="info-item">
-                    <span class="info-label">Email Address</span>
-                    <span class="info-value">{{ row[2] }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Date of Birth</span>
-                    <span class="info-value">{{ row[3] }}</span>
-                </div>
-            </div>
-
-            <div class="qr-section">
-                <div id="qrcode"></div>
-            </div>
-
-            <div class="card-actions">
-                <form method="POST" action="/deleteuser" style="display: inline;">
-                    <input type="hidden" name="email" value="{{ row[2] }}">
-                    <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
-                        Delete User
-                    </button>
-                </form>
-            </div>
-        </div>
-        {% endfor %}
+    <!-- Filters -->
+    <div class="filters">
+        <input type="date" id="dateFilter">
+        <select id="typeFilter">
+            <option value="all">All Types</option>
+            <option value="lecture">Lecture</option>
+            <option value="workshop">Workshop</option>
+            <option value="poster">Poster</option>
+            <option value="keynote">Keynote</option>
+        </select>
     </div>
 
-    <script type="text/javascript">
-        new QRCode(document.getElementById("qrcode"), "http://192.168.1.11:5000/question?eid=1");
-    </script>
+<!-- Grid -->
+<div class="sessions-grid" id="sessionsGrid">
+
+    <div class="session-card" data-date="2025-10-10" data-type="keynote">
+        <div class="session-date">2025-10-10</div>
+        <div class="session-time">09:00 - 10:30</div>
+        <div class="session-title">Opening Ceremony</div>
+        <div class="session-desc">Future of digital health</div>
+        <div class="session-footer">
+            <span class="type type-keynote">keynote</span>
+            <span>Main Hall</span>
+        </div>
+    </div>
+
+    <div class="session-card" data-date="2025-10-10" data-type="lecture">
+        <div class="session-date">2025-10-10</div>
+        <div class="session-time">11:00 - 12:30</div>
+        <div class="session-title">AI in Medical Diagnostics</div>
+        <div class="session-desc">Machine learning in imaging</div>
+        <div class="session-footer">
+            <span class="type type-lecture">lecture</span>
+            <span>Room A</span>
+        </div>
+    </div>
+
+    <div class="session-card" data-date="2025-10-11" data-type="workshop">
+        <div class="session-date">2025-10-11</div>
+        <div class="session-time">14:00 - 16:00</div>
+        <div class="session-title">Medical Imaging Workshop</div>
+        <div class="session-desc">Hands-on session</div>
+        <div class="session-footer">
+            <span class="type type-workshop">workshop</span>
+            <span>Room B</span>
+        </div>
+    </div>
+
+
+
+<script>
+const dateFilter = document.getElementById("dateFilter");
+const typeFilter = document.getElementById("typeFilter");
+const cards = document.querySelectorAll(".session-card");
+
+function filterSessions() {
+    const selectedDate = dateFilter.value;
+    const selectedType = typeFilter.value;
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const cardDate = card.dataset.date;
+        const cardType = card.dataset.type;
+
+        let show = true;
+
+        if (selectedDate && cardDate !== selectedDate) {
+            show = false;
+        }
+
+        if (selectedType !== "all" && cardType !== selectedType) {
+            show = false;
+        }
+
+        card.style.display = show ? "block" : "none";
+        if (show) visibleCount++;
+    });
+
+    // رسالة إذا ما كان حتى عنصر
+    let msg = document.querySelector(".no-sessions");
+    if (!msg) {
+        msg = document.createElement("p");
+        msg.className = "no-sessions";
+        msg.textContent = "No sessions found";
+        document.getElementById("sessionsGrid").appendChild(msg);
+    }
+    msg.style.display = visibleCount === 0 ? "block" : "none";
+}
+
+dateFilter.addEventListener("change", filterSessions);
+typeFilter.addEventListener("change", filterSessions);
+</script>
+
 </body>
 </html>
