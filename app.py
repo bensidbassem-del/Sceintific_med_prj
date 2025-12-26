@@ -107,7 +107,7 @@ def setup_database():
     )
      """)
  #participant registrations
- cur.execute("""
+    cur.execute("""
      CREATE TABLE IF NOT EXISTS Inscription (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     type_inscription TEXT,
@@ -194,13 +194,43 @@ def register():
     #return render_template('welcome.html', username=username, email=email, dateofbirth=dateofbirth, password=password)
 @app.route('/adminpage')
 def admindashboard():
-    return render_template('admindashboard.html')
+    id=session.get('user_id')
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    
+    cur.execute("SELECT * FROM users WHERE id=?", (id,))
+    user = cur.fetchone()
+    con.close()
+    session['user_id'] = user[0]
+    session['email'] = user[2]
+    session['role'] = user[5]  
+    return render_template('admindashboard.html', user=user )
 @app.route('/superadm')
 def superadm():
-    return render_template('superadmindashboard.html')
+    id=session.get('user_id')
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    
+    cur.execute("SELECT * FROM users WHERE id=?", (id,))
+    user = cur.fetchone()
+    con.close()
+    session['user_id'] = user[0]
+    session['email'] = user[2]
+    session['role'] = user[5]  
+    return render_template('superadmindashboard.html', user=user)
 @app.route('/userpage')
 def userpage():
-    return render_template('userdashboard.html')
+    id=session.get('user_id')
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    
+    cur.execute("SELECT * FROM users WHERE id=?", (id,))
+    user = cur.fetchone()
+    con.close()
+    session['user_id'] = user[0]
+    session['email'] = user[2]
+    session['role'] = user[5]  
+    return render_template('userdashboard.html',user=user)
 
 @app.route('/userdetails')
 def userdetails():
