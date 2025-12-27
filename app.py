@@ -856,11 +856,25 @@ def evaluation_report(prop_id):
         evaluations=evaluations
     )
 
- # If proposition does not exist or not accepted
+ @app.route('/assign_proposition_session', methods=['POST'])
+def assign_proposition_session():
+    if session.get('role') not in ('admin', 'super_admin'):
+        return "Unauthorized", 403
+
+    prop_id = request.form.get('proposition_id')
+    session_id = request.form.get('session_id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT statut FROM Proposition WHERE id=?
+    """, (prop_id,))
+    prop = cur.fetchone()
+
     if not prop or prop[0] != 'accepted':
         con.close()
         return "Only accepted propositions can be assigned"
-
     cur.execute("""
         INSERT INTO SessionProposition (id_session, id_proposition)
         VALUES (?, ?)
