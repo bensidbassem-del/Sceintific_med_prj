@@ -107,6 +107,7 @@ def setup_database():
     badge_code TEXT
 )
     """)
+    
     #une table qui relie une proposition et un evaluateur
     cur.execute("""
 CREATE TABLE IF NOT EXISTS ReviewerAssignment (
@@ -119,7 +120,30 @@ CREATE TABLE IF NOT EXISTS ReviewerAssignment (
 )
 """)
 
+ # Sessions table
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS Session (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titre TEXT NOT NULL,
+    horaire DATETIME,
+    salle TEXT,
+    id_evenement INTEGER,
+    responsable INTEGER,
+    FOREIGN KEY(id_evenement) REFERENCES events(id),
+    FOREIGN KEY(responsable) REFERENCES users(id)
+)
+""")
 
+# Link:which proposition in wechmn session
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS SessionProposition (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_session INTEGER,
+    id_proposition INTEGER,
+    FOREIGN KEY(id_session) REFERENCES Session(id),
+    FOREIGN KEY(id_proposition) REFERENCES Proposition(id)
+)
+""")
     # Create admin user with hashed password
     admin_hash = generate_password_hash('admin')
     print(f"Admin hash: {admin_hash}")  # Debug print
@@ -831,6 +855,21 @@ def evaluation_report(prop_id):
         proposition=proposition,
         evaluations=evaluations
     )
+
+ # If proposition does not exist or not accepted
+    if not prop or prop[0] != 'accepted':
+        con.close()
+        return "Only accepted propositions can be assigned"
+
+    cur.execute("""
+        INSERT INTO SessionProposition (id_session, id_proposition)
+        VALUES (?, ?)
+    """, (session_id, prop_id))
+
+    con.commit()
+    con.close()
+
+    return "Assignment successful"
 
 if __name__ == '__main__':
     setup_database()
