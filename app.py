@@ -107,6 +107,7 @@ def setup_database():
     badge_code TEXT
 )
     """)
+    
     #une table qui relie une proposition et un evaluateur
     cur.execute("""
 CREATE TABLE IF NOT EXISTS ReviewerAssignment (
@@ -119,7 +120,30 @@ CREATE TABLE IF NOT EXISTS ReviewerAssignment (
 )
 """)
 
+ # Sessions table
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS Session (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titre TEXT NOT NULL,
+    horaire DATETIME,
+    salle TEXT,
+    id_evenement INTEGER,
+    responsable INTEGER,
+    FOREIGN KEY(id_evenement) REFERENCES events(id),
+    FOREIGN KEY(responsable) REFERENCES users(id)
+)
+""")
 
+# Link:which proposition in wechmn session
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS SessionProposition (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_session INTEGER,
+    id_proposition INTEGER,
+    FOREIGN KEY(id_session) REFERENCES Session(id),
+    FOREIGN KEY(id_proposition) REFERENCES Proposition(id)
+)
+""")
     # Create admin user with hashed password
     admin_hash = generate_password_hash('admin')
     print(f"Admin hash: {admin_hash}")  # Debug print
@@ -878,6 +902,35 @@ def create_session():
         cur.execute("INSERT INTO Sessions (titre,time,room,chairman,user_id)VALUES (?,?,?,?,?)",(titre,time,room,chairman,user_id) )
         con.commit()
     return redirect(url_for('admindashboard'))    
+
+ @app.route('/assign_proposition_session', methods=['POST'])
+def assign_proposition_session():
+    if session.get('role') not in ('admin', 'super_admin'):
+        return "Unauthorized", 403
+
+    prop_id = request.form.get('proposition_id')
+    session_id = request.form.get('session_id')
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT statut FROM Proposition WHERE id=?
+    """, (prop_id,))
+    prop = cur.fetchone()
+
+    if not prop or prop[0] != 'accepted':
+        con.close()
+        return "Only accepted propositions can be assigned"
+    cur.execute("""
+        INSERT INTO SessionProposition (id_session, id_proposition)
+        VALUES (?, ?)
+    """, (session_id, prop_id))
+
+    con.commit()
+    con.close()
+
+    return "Assignment successful"
 
 if __name__ == '__main__':
     setup_database()

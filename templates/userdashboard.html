@@ -14,14 +14,15 @@ body {
 }
 
 .sidebar {
-     width: 240px;
+     width: 200px;
      height: 100vh;
-   background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+     background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
     color: #fff;
     padding: 20px;
     position: fixed;
     border-radius: 0 25px 25px 0;
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 100;
 }
  .sidebar h1 {
             font-size: 20px;
@@ -34,6 +35,7 @@ body {
     text-align: center;
     opacity: 0.8;
     margin-bottom: 30px;
+    font-size: 14px;
 }
  
  /* .btnn {
@@ -63,7 +65,7 @@ font-weight:500 ;
     transform: scale(0.9);
 }
 
-header {
+/* header {
     background-color: #d9f3f3;
     border-radius: 15px;
     position: fixed;
@@ -93,7 +95,7 @@ header input[type="search"] {
 header input[type="search"]:focus {
     border-color: #06e4ce;
     box-shadow: 0 0 8px rgba(6, 228, 206, 0.5);
-}
+} */
 .profile {
     display: flex;
     align-items: center;
@@ -133,7 +135,7 @@ header input[type="search"]:focus {
     margin-left: 260px;
     padding: 40px;
     flex: 1;
-    padding-top: 120px;
+   
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -345,6 +347,48 @@ padding: 12px 25px;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(13, 59, 102, 0.3);
 }
+.welcome-header {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #0ea5e9;
+        }
+
+        .welcome-header h1 {
+            color: #1e40af;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+        #dash{
+            background-color: #06e4ce;
+            border-radius: 12px;
+            transform: translateX(5px);
+        }
+        .sss a.active{
+            color: #210ce1;
+        }
+
 </style>
 </head>
 <body>
@@ -353,7 +397,7 @@ padding: 12px 25px;
     <h1>Scientific Event Platform</h1>
     <p>User Dashboard</p>
     <div class="content">
-        <div class="sss"><a href="/userpage">
+        <div class="sss" id="dash"><a href="#dash" class="active">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
   <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
   <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
@@ -388,31 +432,17 @@ padding: 12px 25px;
     </div>
 </div>
 
-<header>
-    <div class="search-icon">
-       <!-- <span class="icn"> <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-</svg></span> -->
-    <input type="search" placeholder="Search event, submissions...  "></div>
-    <div class="profile">
-        <div class="boxprof">{{ user[1][:2] }}</div>
-        <div class="profile-info">
-            <span>{{ user[1] }}</span>
-            <p>{{ user[5] }}</p>
-        </div>
-    </div>
-</header>
+
 
 <div class="main-content">
-    <h1>Welcome {{ user[1] }}!</h1>
-    <!-- <h2>User Information</h2> -->
-
-
-<!-- <div class="button-show">
- <input type="button" value="show event"> 
-
-</div> -->
-
+  
+ <div class="welcome-header">
+            <div>
+                <h1>Welcome, {{user[1]}}!</h1>
+                <p>Here's what's happening with your platform today</p>
+            </div>
+            <div class="admin-badge">User</div>
+        </div>
 
     <div class="card">
         <div class="card-header">
