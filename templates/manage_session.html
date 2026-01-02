@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gestion des sessions</title>
+  </head>
+  <body>
+    <h2>Créer / Modifier une session scientifique</h2>
+
+    <form method="POST">
+      <!-- utilisé uniquement pour la mise à jour -->
+      <input
+        type="hidden"
+        name="session_id"
+        value="{{ session_data.id if session_data }}"
+      />
+
+      <!-- événement -->
+      <label>Événement :</label><br />
+      <input
+        type="number"
+        name="event_id"
+        value="{{ session_data.id_evenement if session_data }}"
+        required
+      /><br /><br />
+
+      <!-- titre -->
+      <label>Titre de la session :</label><br />
+      <input
+        type="text"
+        name="titre"
+        value="{{ session_data.titre if session_data }}"
+        required
+      /><br /><br />
+
+      <!-- horaire -->
+      <label>Horaire :</label><br />
+      <input
+        type="text"
+        name="horaire"
+        placeholder="Ex : 09:00 - 10:30"
+        value="{{ session_data.horaire if session_data }}"
+        required
+      /><br /><br />
+
+      <!-- salle -->
+      <label>Salle :</label><br />
+      <input
+        type="text"
+        name="salle"
+        value="{{ session_data.salle if session_data }}"
+        required
+      /><br /><br />
+
+      <!-- responsable -->
+      <label>Président de session :</label><br />
+      <input
+        type="text"
+        name="responsable"
+        value="{{ session_data.responsable if session_data }}"
+        placeholder="ID ou nom du responsable"
+        required
+      /><br /><br />
+
+      <button type="submit">
+        {{ "Mettre à jour" if session_data else "Créer la session" }}
+      </button>
+    </form>
+
+    <br />
+    <a href="{{ url_for('program') }}">⬅ Retour au programme</a>
+  </body>
+</html>
