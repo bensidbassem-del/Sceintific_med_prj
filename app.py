@@ -931,6 +931,41 @@ def assign_proposition_session():
     con.close()
 
     return "Assignment successful"
+    @app.route('/manage_session', methods=['GET', 'POST'])
+def manage_session():
+    if session.get('role') not in ('admin', 'super_admin'):
+        return "Unauthorized", 403
+
+    if request.method == 'POST':
+        titre = request.form.get('titre')
+        horaire = request.form.get('horaire')
+        salle = request.form.get('salle')
+        responsable = request.form.get('responsable')
+        event_id = request.form.get('event_id')
+        session_id = request.form.get('session_id')
+
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+
+        if session_id:  # mise à jour
+            cur.execute("""
+                UPDATE Session
+                SET titre=?, horaire=?, salle=?, responsable=?
+                WHERE id=?
+            """, (titre, horaire, salle, responsable, session_id))
+        else:  # création
+            cur.execute("""
+                INSERT INTO Session (titre, horaire, salle, responsable, id_evenement)
+                VALUES (?, ?, ?, ?, ?)
+            """, (titre, horaire, salle, responsable, event_id))
+
+        con.commit()
+        con.close()
+
+        return redirect(url_for('programme'))
+
+    return render_template('manage_session.html')
+
 
 if __name__ == '__main__':
     setup_database()
