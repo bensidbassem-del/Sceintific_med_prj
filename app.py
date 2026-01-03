@@ -899,11 +899,11 @@ def create_session():
         chairman=request.form.get('chairman')
         con = sqlite3.connect("database.db")
         cur=con.cursor()
-        cur.execute("INSERT INTO Sessions (titre,time,room,chairman,user_id)VALUES (?,?,?,?,?)",(titre,time,room,chairman,user_id) )
+        cur.execute("INSERT INTO Session (titre,time,room,chairman,user_id)VALUES (?,?,?,?,?)",(titre,time,room,chairman,user_id) )
         con.commit()
     return redirect(url_for('admindashboard'))    
 
- @app.route('/assign_proposition_session', methods=['POST'])
+@app.route('/assign_proposition_session', methods=['POST'])
 def assign_proposition_session():
     if session.get('role') not in ('admin', 'super_admin'):
         return "Unauthorized", 403
