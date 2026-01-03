@@ -208,13 +208,7 @@ def register():
     cur.execute("INSERT INTO users (username,email,dateofbirth,password_hash,role,institution)VALUES (?,?,?,?,?,?)",(username,email,dateofbirth,password,role,institution) )
     con.commit()
     con.close()
-    if role == 'admin':
-        return redirect(url_for('admindashboard'))
-    else:
-        if role == 'superadmin':
-            return redirect(url_for('superadm'))
-        else:
-            return redirect(url_for('userpage'))
+    return redirect(url_for('accueil'))
     #return render_template('welcome.html', username=username, email=email, dateofbirth=dateofbirth, password=password)
 @app.route('/adminpage')
 def admindashboard():
