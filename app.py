@@ -928,10 +928,10 @@ def assign_proposition_session():
     return "Assignment successful"
 @app.route('/manage_session', methods=['GET', 'POST'])
 def manage_session():
-    if session.get('role') not in ('admin', 'super_admin'):
+     if session.get('role') not in ('admin', 'super_admin'):
         return "Unauthorized", 403
 
-    if request.method == 'POST':
+     if request.method == 'POST':
         titre = request.form.get('titre')
         horaire = request.form.get('horaire')
         salle = request.form.get('salle')
@@ -959,7 +959,7 @@ def manage_session():
 
         return redirect(url_for('programme'))
 
-    return render_template('manage_session.html')
+     return render_template('manage_session.html')
 
 
 if __name__ == '__main__':
