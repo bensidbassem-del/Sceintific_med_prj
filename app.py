@@ -926,7 +926,7 @@ def assign_proposition_session():
     con.close()
 
     return "Assignment successful"
-@app.route('/manage_session', methods=['GET', 'POST'])
+    @app.route('/manage_session', methods=['GET', 'POST'])
 def manage_session():
      if session.get('role') not in ('admin', 'super_admin'):
         return "Unauthorized", 403
@@ -960,7 +960,9 @@ def manage_session():
         return redirect(url_for('programme'))
 
      return render_template('manage_session.html')
-
+@app.route('/editprofile')
+def editprofile():
+    return render_template('editprofil.html')
 
 if __name__ == '__main__':
     setup_database()
