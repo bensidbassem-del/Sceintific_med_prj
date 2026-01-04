@@ -230,6 +230,24 @@
             }
             
 }
+.session-btn {
+    display: inline-block;
+    margin: 20px auto 0;
+    padding: 12px 24px;
+    background-color: #0ea5e9;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.3s;
+   text-align: center;
+    width: fit-content;
+    
+}
+.session-btn:hover {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+}
 </style>
 </head>
 
@@ -290,6 +308,7 @@
         </div>
     </div>
 <div class="main-content">
+   
     <h1>Scientific Programme</h1>
 
     <!-- Filters -->
@@ -337,10 +356,13 @@
         <div class="session-footer">
             <span class="type type-workshop">workshop</span>
             <span>Room B</span>
-        </div>
+        </div>  
+        
     </div>
+ 
 
-
+</div> <a href="/manage_session" class="session-btn">manage session</a>
+</div>
 
 <script>
 const dateFilter = document.getElementById("dateFilter");
@@ -370,7 +392,7 @@ function filterSessions() {
         if (show) visibleCount++;
     });
 
-    // رسالة إذا ما كان حتى عنصر
+
     let msg = document.querySelector(".no-sessions");
     if (!msg) {
         msg = document.createElement("p");
