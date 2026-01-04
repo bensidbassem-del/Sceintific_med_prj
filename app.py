@@ -884,18 +884,19 @@ def create_sessionpage():
     return render_template('create_session.html')
 @app.route('/create_session', methods=['POST'])
 def create_session():
-    user_id=session.get('id')
+    event_id=session.get('events(id)')
+    chairman=session.get('id')
     role=session.get('role')
-    if (role=='admin'):
-        titre=request.form.get('title')
-        time=request.form.get('time')
-        room=request.form.get('room')
-        chairman=request.form.get('chairman')
+    if (role=='participant')or (role=='speaker'):
+        titre=request.form.get('titre')
+        time=request.form.get('horaire')
+        room=request.form.get('salle')
+       # chairman=request.form.get('chairman')
         con = sqlite3.connect("database.db")
         cur=con.cursor()
-        cur.execute("INSERT INTO Session (titre,time,room,chairman,user_id)VALUES (?,?,?,?,?)",(titre,time,room,chairman,user_id) )
+        cur.execute("INSERT INTO Session (titre,horaire,salle,responsable,event_id)VALUES (?,?,?,?,?)",(titre,time,room,chairman,event_id) )
         con.commit()
-    return redirect(url_for('admindashboard'))    
+    return redirect(url_for('userpage'))    
 
 @app.route('/assign_proposition_session', methods=['POST'])
 def assign_proposition_session():
@@ -925,7 +926,7 @@ def assign_proposition_session():
     con.close()
 
     return "Assignment successful"
-    @app.route('/manage_session', methods=['GET', 'POST'])
+@app.route('/manage_session', methods=['GET', 'POST'])
 def manage_session():
     if session.get('role') not in ('admin', 'super_admin'):
         return "Unauthorized", 403
