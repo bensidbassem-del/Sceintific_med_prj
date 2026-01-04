@@ -2,72 +2,319 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestion des sessions</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+       
+        background: #e6f7f7;
+       margin: 0;
+    display: flex;
+    font-family: Arial, sans-serif;
+       
+      }
+      .sidebar {
+     width: 240px;
+     height: 100vh;
+     background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+    color: #fff;
+    padding: 20px;
+    position: fixed;
+    border-radius: 0 25px 25px 0;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+ .sidebar h1 {
+            font-size: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+.sidebar p {
+    text-align: center;
+    opacity: 0.8;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+ 
+ 
+.sss a {
+    display: block;
+    padding: 12px 15px;
+    margin: 5px 0;
+    color: #f6f6f6;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: 0.3s;
+    font-weight: 500;
+}
+.sss a:hover {
+    background-color: #06e4ce;
+    color: #210ce1;
+    transform: scale(0.9);
+}
+.logbtn input[type="button"] {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background-color: #cbf9f2;
+            color: rgb(24, 23, 23);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 90%;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .logbtn input[type="button"]:hover {
+            background-color: #06e4ce;
+            color: #210ce1;
+            transform: scale(1.05);
+        }
+
+      .container {
+          margin-left: 400px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 600px;
+        width: 100%;
+        padding: 40px;
+      }
+
+      h2 {
+        color: #1e40af;
+        font-size: 28px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      label {
+        display: block;
+        color: #1e40af;
+        font-weight: 500;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+      }
+
+      input[type="text"]:focus,
+      input[type="number"]:focus {
+        outline: none;
+        border-color: #210ce1;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      input::placeholder {
+        color: #a0aec0;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      button[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      button[type="submit"]:active {
+        transform: translateY(0);
+      }
+
+      .back-link {
+        display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #f1f5f9;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            justify-content: center;
+            border: 2px solid #e2e8f0;
+      }
+
+      .back-link:hover {
+        background: #e2e8f0;
+            color: #1e293b;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-link::before {
+        content: '←';
+        margin-right: 8px;
+        font-size: 18px;
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          padding: 30px 20px;
+        }
+
+        h2 {
+          font-size: 24px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h2>Créer / Modifier une session scientifique</h2>
+    <div class="sidebar">
+    <h1>Scientific Event Platform</h1>
+    <p>User Dashboard</p>
+    <div class="content">
+        <div class="sss" id="dash"><a href="/userpage" class="active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+  <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+  <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
+</svg> Dashboard</a></div>
+        <div class="sss">
+            <!--akram sayi ani bedeltou-->
+            <a href="/show_events"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-event-fill" viewBox="0 0 16 16">
+  <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-3.5-7h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5"/>
+</svg>
+                Events</a>
+              </div>
+        <div class="sss"><a href="/show_submissions">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5zM3 3H2v1h1z"/>
+  <path d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1z"/>
+  <path fill-rule="evenodd" d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5zM2 7h1v1H2zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm1 .5H2v1h1z"/>
+</svg> My Submissions</a></div>
+        <div class="sss"><a href="#cert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mortarboard-fill" viewBox="0 0 16 16">
+  <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917z"/>
+  <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466z"/>
+</svg> My Certification</a></div>
+        <div class="sss"><a href="#msg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+  <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
+</svg> Messages</a></div>
+        <div class="sss"><a href="#setti">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+  <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+</svg> Settings</a></div>
+    <div class="logbtn"> <input type="button" value=" Logout" onclick="location.href='/logout'"></div>
+    </div>
+</div>
 
-    <form method="POST">
-      <!-- utilisé uniquement pour la mise à jour -->
-      <input
-        type="hidden"
-        name="session_id"
-        value="{{ session_data.id if session_data }}"
-      />
+    <div class="container">
+      <h2>Créer / Modifier une session scientifique</h2>
+      <form method="POST">
+        <input
+          type="hidden"
+          name="session_id"
+          value="{{ session_data.id if session_data }}"
+        />
 
-      <!-- événement -->
-      <label>Événement :</label><br />
-      <input
-        type="number"
-        name="event_id"
-        value="{{ session_data.id_evenement if session_data }}"
-        required
-      /><br /><br />
+        <div class="form-group">
+          <label for="event_id">Événement</label>
+          <input
+            type="number"
+            id="event_id"
+            name="event_id"
+            value="{{ session_data.id_evenement if session_data }}"
+            required
+          />
+        </div>
 
-      <!-- titre -->
-      <label>Titre de la session :</label><br />
-      <input
-        type="text"
-        name="titre"
-        value="{{ session_data.titre if session_data }}"
-        required
-      /><br /><br />
+        <div class="form-group">
+          <label for="titre">Titre de la session</label>
+          <input
+            type="text"
+            id="titre"
+            name="titre"
+            value="{{ session_data.titre if session_data }}"
+            required
+          />
+        </div>
 
-      <!-- horaire -->
-      <label>Horaire :</label><br />
-      <input
-        type="text"
-        name="horaire"
-        placeholder="Ex : 09:00 - 10:30"
-        value="{{ session_data.horaire if session_data }}"
-        required
-      /><br /><br />
+        <div class="form-group">
+          <label for="horaire">Horaire</label>
+          <input
+            type="text"
+            id="horaire"
+            name="horaire"
+            placeholder="Ex : 09:00 - 10:30"
+            value="{{ session_data.horaire if session_data }}"
+            required
+          />
+        </div>
 
-      <!-- salle -->
-      <label>Salle :</label><br />
-      <input
-        type="text"
-        name="salle"
-        value="{{ session_data.salle if session_data }}"
-        required
-      /><br /><br />
+        <div class="form-group">
+          <label for="salle">Salle</label>
+          <input
+            type="text"
+            id="salle"
+            name="salle"
+            value="{{ session_data.salle if session_data }}"
+            required
+          />
+        </div>
 
-      <!-- responsable -->
-      <label>Président de session :</label><br />
-      <input
-        type="text"
-        name="responsable"
-        value="{{ session_data.responsable if session_data }}"
-        placeholder="ID ou nom du responsable"
-        required
-      /><br /><br />
+        <div class="form-group">
+          <label for="responsable">Président de session</label>
+          <input
+            type="text"
+            id="responsable"
+            name="responsable"
+            value="{{ session_data.responsable if session_data }}"
+            placeholder="ID ou nom du responsable"
+            required
+          />
+        </div>
 
-      <button type="submit">
-        {{ "Mettre à jour" if session_data else "Créer la session" }}
-      </button>
-    </form>
+        <button type="submit">
+          {{ "Mettre à jour" if session_data else "Créer la session" }}
+        </button>
 
-    <br />
-    <a href="{{ url_for('program') }}">⬅ Retour au programme</a>
+        <a href="{{ url_for('program') }}" class="back-link">
+          Retour au programme
+        </a>
+      </form>
+    </div>
   </body>
 </html>
