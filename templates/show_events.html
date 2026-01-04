@@ -242,7 +242,26 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
         }
-
+        .action-button{
+             background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+            color: white;
+              width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-decoration: none;
+            text-align: center;
+            
+        }
+        .action-button:hover {
+             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
      
 
         @media (max-width: 1024px) {
@@ -398,10 +417,10 @@
                     </form>
                      <a href="/create_sessionpage" class="action-button">
                     <div class="action-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                        </svg>
+                        </svg> -->
                     </div>
                     <span class="action-text">Create Session</span>
                     </a>
@@ -423,7 +442,7 @@
        
         <div class="card-list">
             
-            <div class="card-event">
+            <!-- <div class="card-event">
                 <div class="card-header">
                     <h2>International Conference on AI Research</h2>
                     <span class="theme-tag">Artificial Intelligence</span>
@@ -460,8 +479,8 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="card-event">
+             -->
+            <!-- <div class="card-event">
                 <div class="card-header">
                     <h2>Climate Change Symposium 2023</h2>
                     <span class="theme-tag">Environmental Science</span>
@@ -496,7 +515,7 @@
                                    onclick="location.href='/submission_form?event_id=2'">
                         </form>
                     </div>
-                </div>
+                </div> -->
             </div>
 
 </div>
