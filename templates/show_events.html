@@ -201,10 +201,14 @@
         }
 
         .card-actions {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             justify-content: space-between;
             gap: 12px;
             margin-top: auto;
+        }
+        .card-actions .delete-btn{
+             grid-column: 2 / 3;
         }
 
         .card-actions form {
@@ -409,12 +413,7 @@
 
                 <div class="card-actions">
 
-                    <form method="POST" action="/deleteevent">
-                        <input type="hidden" name="id" value="{{ row[0] }}">
-                        <input type="submit" value="Delete Event"
-                               class="delete-btn"
-                               onclick="return confirm('Are you sure you want to delete this event?')">
-                    </form>
+                   
                      <a href="/create_sessionpage" class="action-button">
                     <div class="action-icon">
                         <!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
@@ -431,7 +430,15 @@
                                value="Submit Proposal"
                                onclick="location.href='/submission_form?event_id={{ row[0] }}'">
                     </form>
-
+                    <a href="/program" class="action-button">
+                        <span class="action-text">program</span> 
+                    </a>
+ <form method="POST" action="/deleteevent">
+                        <input type="hidden" name="id" value="{{ row[0] }}">
+                        <input type="submit" value="Delete Event"
+                               class="delete-btn"
+                               onclick="return confirm('Are you sure you want to delete this event?')">
+                    </form>
                 </div>
 
             </div>
